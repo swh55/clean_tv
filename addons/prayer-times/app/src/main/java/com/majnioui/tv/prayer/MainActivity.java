@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +35,11 @@ import java.util.Locale;
  */
 public class MainActivity extends Activity {
     private static final String TAG = "PrayerTimes";
+    /** Aladhan's timing keys, in display order. */
     private static final String[] NAMES = {"Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"};
+    /** The same names in the device language, shown next to the Arabic names on the cards. */
+    private static final int[] NAME_RES = {R.string.prayer_fajr, R.string.prayer_sunrise, R.string.prayer_dhuhr,
+            R.string.prayer_asr, R.string.prayer_maghrib, R.string.prayer_isha};
     private static final String[] ARABIC = {"الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"};
     private static final int[] ICONS = {R.drawable.ic_fajr, R.drawable.ic_sunrise, R.drawable.ic_dhuhr,
             R.drawable.ic_asr, R.drawable.ic_maghrib, R.drawable.ic_isha};
@@ -43,6 +48,9 @@ public class MainActivity extends Activity {
     private final Handler main = new Handler(Looper.getMainLooper());
     private Typeface font;
     private int accent;
+    /** True for 12-hour times with an AM/PM marker (res/values/config.xml). */
+    private boolean twelveHour;
+    private SimpleDateFormat format12;
     private TextView dates, next, status;
     private LinearLayout rows;
     /** Today's times as minutes after midnight, in NAMES order; null until loaded. */
@@ -68,6 +76,7 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         font = getResources().getFont(R.font.outfit);
         accent = getColor(R.color.accent);
+        twelveHour = getResources().getBoolean(R.bool.twelve_hour);
 
         FrameLayout root = new FrameLayout(this);
         root.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,
@@ -97,7 +106,7 @@ public class MainActivity extends Activity {
 
         status = text(16, 400, 0x80FFFFFF);
         status.setPadding(0, dp(18), 0, 0);
-        status.setText("Loading…");
+        status.setText(getString(R.string.loading));
         col.addView(status);
 
         setContentView(root);
@@ -139,7 +148,7 @@ public class MainActivity extends Activity {
             main.post(() -> {
                 loading = false;
                 if (result == null) {
-                    status.setText("Can't reach Aladhan. Showing the last times, if any.");
+                    status.setText(getString(R.string.offline));
                     return;
                 }
                 try {
@@ -148,7 +157,7 @@ public class MainActivity extends Activity {
                     render();
                 } catch (Exception e) {
                     Log.w(TAG, "parse: " + e);
-                    status.setText("Unexpected answer from Aladhan.");
+                    status.setText(getString(R.string.bad_answer));
                 }
             });
         }).start();
@@ -162,8 +171,8 @@ public class MainActivity extends Activity {
             String v = t.getString(NAMES[i]).trim();
             int sp = v.indexOf(' ');
             if (sp > 0) v = v.substring(0, sp);   // "05:12 (+01)" style suffixes
-            s[i] = v;
             m[i] = Integer.parseInt(v.substring(0, 2)) * 60 + Integer.parseInt(v.substring(3, 5));
+            s[i] = formatTime(v);
         }
         minutes = m;
         times = s;
@@ -172,9 +181,13 @@ public class MainActivity extends Activity {
         methodName = method != null ? method.optString("name", "") : "";
         JSONObject date = data.getJSONObject("date");
         JSONObject hijri = date.getJSONObject("hijri");
-        dates.setText(new SimpleDateFormat("EEEE d MMMM", Locale.ENGLISH).format(new Date()) + "  ·  "
-                + hijri.getString("day") + " " + hijri.getJSONObject("month").getString("en") + " "
-                + hijri.getString("year") + " AH");
+        // Aladhan names the Hijri month in several languages: Arabic on an Arabic TV, else English.
+        JSONObject month = hijri.getJSONObject("month");
+        String monthName = Locale.getDefault().getLanguage().startsWith("ar") ? month.optString("ar", "") : "";
+        if (monthName.isEmpty()) monthName = month.optString("en", "");
+        dates.setText(new SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(new Date()) + "  ·  "
+                + hijri.getString("day") + " " + monthName + " " + hijri.getString("year") + " "
+                + getString(R.string.hijri_era));
     }
 
     private void render() {
@@ -188,9 +201,11 @@ public class MainActivity extends Activity {
         }
         if (nextIdx >= 0) {
             int left = minutes[nextIdx] - now;
-            next.setText(NAMES[nextIdx] + " in " + (left >= 60 ? left / 60 + " h " : "") + left % 60 + " min");
+            String in = left >= 60 ? getString(R.string.duration_h_m, left / 60, left % 60)
+                    : getString(R.string.duration_m, left % 60);
+            next.setText(getString(R.string.next_countdown, getString(NAME_RES[nextIdx]), in));
         } else {
-            next.setText("Fajr tomorrow");
+            next.setText(getString(R.string.next_fajr_tomorrow));
         }
 
         rows.removeAllViews();
@@ -216,7 +231,7 @@ public class MainActivity extends Activity {
             ar.setText(ARABIC[i]);
             card.addView(ar);
             TextView name = centered(text(20, 500, hl ? 0xE6FFFFFF : (i == 1 ? 0x80FFFFFF : 0xB3FFFFFF)));
-            name.setText(NAMES[i]);
+            name.setText(getString(NAME_RES[i]));
             name.setPadding(0, dp(8), 0, dp(20));
             card.addView(name);
             TextView time = centered(text(42, hl ? 500 : 300, fg));
@@ -229,8 +244,29 @@ public class MainActivity extends Activity {
             lp.setMargins(i == 0 ? 0 : dp(8), 0, i == NAMES.length - 1 ? 0 : dp(8), 0);
             rows.addView(card, lp);
         }
-        status.setText("Aladhan" + (methodName.isEmpty() ? "" : " · " + methodName) + " · updated "
-                + new SimpleDateFormat("HH:mm", Locale.ROOT).format(new Date()));
+        status.setText("Aladhan" + (methodName.isEmpty() ? "" : " · " + methodName) + " · "
+                + getString(R.string.status_updated, nowClock()));
+    }
+
+    /** Aladhan gives "HH:mm"; with twelve_hour on, the same time as "h:mm a" in the device locale (ص/م in Arabic). */
+    private String formatTime(String hhmm) {
+        if (!twelveHour) return hhmm;
+        try {
+            return twelveHourFormat().format(new SimpleDateFormat("HH:mm", Locale.ROOT).parse(hhmm));
+        } catch (ParseException e) {
+            return hhmm;
+        }
+    }
+
+    /** The current time for the status line: 24-hour, or the twelve_hour format when that is on. */
+    private String nowClock() {
+        return twelveHour ? twelveHourFormat().format(new Date())
+                : new SimpleDateFormat("HH:mm", Locale.ROOT).format(new Date());
+    }
+
+    private SimpleDateFormat twelveHourFormat() {
+        if (format12 == null) format12 = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        return format12;
     }
 
     private static String fetch(String url) throws Exception {

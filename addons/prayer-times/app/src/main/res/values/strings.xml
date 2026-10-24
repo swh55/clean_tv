@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The words on the page, in the device language. Arabic: res/values-ar/strings.xml. -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Sunrise</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <!-- "Dhuhr in 2 h 34 min" and "Dhuhr in 45 min". -->
+    <string name="next_countdown">%1$s in %2$s</string>
+    <string name="duration_h_m">%1$d h %2$d min</string>
+    <string name="duration_m">%1$d min</string>
+    <string name="next_fajr_tomorrow">Fajr tomorrow</string>
+    <!-- "Next prayer", for the module card caption; not shown on the page itself. -->
+    <string name="next_prayer">Next prayer</string>
+    <string name="loading">Loading…</string>
+    <string name="offline">Can\'t reach Aladhan. Showing the last times, if any.</string>
+    <string name="bad_answer">Unexpected answer from Aladhan.</string>
+    <!-- Status footer: "Aladhan · Muslim World League · updated 14:32". -->
+    <string name="status_updated">updated %1$s</string>
+    <!-- After the Hijri year: "… 1447 AH". -->
+    <string name="hijri_era">AH</string>
+</resources>

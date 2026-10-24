@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- الكلمات المعروضة في الصفحة عند ضبط التلفاز على العربية. -->
+    <string name="prayer_fajr">الفجر</string>
+    <string name="prayer_sunrise">الشروق</string>
+    <string name="prayer_dhuhr">الظهر</string>
+    <string name="prayer_asr">العصر</string>
+    <string name="prayer_maghrib">المغرب</string>
+    <string name="prayer_isha">العشاء</string>
+    <!-- "الظهر بعد 2 س 34 د" و"الظهر بعد 45 د". -->
+    <string name="next_countdown">%1$s بعد %2$s</string>
+    <string name="duration_h_m">%1$d س %2$d د</string>
+    <string name="duration_m">%1$d د</string>
+    <string name="next_fajr_tomorrow">الفجر غدًا</string>
+    <!-- "الصلاة القادمة"، لعنوان بطاقة الوحدة؛ لا يظهر في الصفحة نفسها. -->
+    <string name="next_prayer">الصلاة القادمة</string>
+    <string name="loading">جارٍ التحميل…</string>
+    <string name="offline">تعذّر الوصول إلى Aladhan. تُعرض آخر الأوقات، إن توفّرت.</string>
+    <string name="bad_answer">رد غير متوقع من Aladhan.</string>
+    <!-- سطر الحالة أسفل الصفحة. -->
+    <string name="status_updated">آخر تحديث %1$s</string>
+    <!-- بعد السنة الهجرية: "… 1447 هـ". -->
+    <string name="hijri_era">هـ</string>
+</resources>

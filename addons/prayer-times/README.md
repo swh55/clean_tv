@@ -11,10 +11,17 @@ countdown to it, plus today's Gregorian and Hijri dates. Each prayer has its Ara
 - **The city and the calculation method** are set before you build, in `app/src/main/res/values/config.xml`:
   `latitude`, `longitude`, `place` (the name shown) and `method`, Aladhan's
   [method number](https://aladhan.com/calculation-methods) (2 ISNA, 3 Muslim World League, 4 Umm al-Qura,
-  5 Egyptian, 13 Turkey, 21 Morocco...). The default is Casablanca with the Morocco method.
+  5 Egyptian, 13 Turkey, 21 Morocco...). The default is Damascus with the Muslim World League method.
 - It reads Aladhan when the page opens and again after midnight. The countdown updates every minute.
   Offline, the last times stay on screen.
-- 24-hour times, English words.
+- Times are 24-hour by default; set `twelve_hour` to true in `config.xml` for 12-hour times with an AM/PM
+  marker (ص/م on an Arabic TV).
+
+## Languages
+
+The page follows the TV's system language: English words everywhere, or Arabic (الفجر، الشروق، الظهر…) when the
+TV is set to Arabic — including the Hijri month name, which Aladhan gives in both. The place name and the
+calculation method stay as built in `config.xml`.
 
 ## Permissions
 
