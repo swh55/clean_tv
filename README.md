@@ -10,6 +10,7 @@
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/README-%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-cfffcf?style=flat&labelColor=15181e" alt="简体中文"></a>
   <a href="README.vi.md"><img src="https://img.shields.io/badge/README-Ti%E1%BA%BFng%20Vi%E1%BB%87t-cfffcf?style=flat&labelColor=15181e" alt="Tiếng Việt"></a>
   <a href="README.ja.md"><img src="https://img.shields.io/badge/README-%E6%97%A5%E6%9C%AC%E8%AA%9E-cfffcf?style=flat&labelColor=15181e" alt="日本語"></a>
+  <a href="README.ar.md"><img src="https://img.shields.io/badge/README-%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9-cfffcf?style=flat&labelColor=15181e" alt="العربية"></a>
   <a href="https://buymeacoffee.com/gathint"><img src="https://img.shields.io/badge/support-%E2%9D%A4-ff5e8a?style=flat&labelColor=15181e" alt="Support, buy me a coffee"></a>
   <a href="https://www.producthunt.com/products/cleanyourtv"><img src="https://img.shields.io/badge/Product%20Hunt-upvote%20%E2%96%B2-da552f?style=flat&logo=producthunt&logoColor=white&labelColor=15181e" alt="CleanYourTV on Product Hunt"></a>
 </p>
@@ -420,6 +421,7 @@ tools/theme.sh themes/aurora                                 # push a theme; --r
 | [`tools/adb-closed.py`](tools/adb-closed.py) | Checks that the TV's network ADB port is closed once debugging is off: exits 0 when nothing answers, 1 while it is still open, 2 when the check itself could not run. No `nc` needed. |
 | [`tools/privacy.py`](tools/privacy.py) | Audits the TV for voice, ACR and telemetry candidates and prints the evidence for each; `--write` turns the findings into a list `disable.sh` and `restore.sh` already understand. |
 | [`tools/theme.sh`](tools/theme.sh) | Push a folder from [`themes/`](themes/) to the launcher and restart Home. |
+| [`tools/weather.py`](tools/weather.py) | Fetch the weather from Open-Meteo on the computer and push a small `weather.json` to the TV for the launcher's weather line (`show_weather_line`); the launcher itself never goes online. |
 | [`tools/manage.py`](tools/manage.py) | List every add-on, theme and switch with its screenshot, see what is on the TV, and install, update or remove one by running its creator's own script. |
 | [`tools/bench.py`](tools/bench.py) | Measures the launcher that answers HOME: key latency, how far the focus moved, janky frames, cold start, return to Home, and the idle CPU and PSS it costs. Changes nothing on the TV and writes the raw per-key numbers to JSON; no extra install. |
 | [`tools/trace.py`](tools/trace.py), [`trace_report.py`](tools/trace_report.py) | Records Perfetto traces of the launcher (return to Home, cold start, D-pad) and reports where its time goes, per run and before against after. Optional: needs [`requirements-perf.txt`](tools/requirements-perf.txt). [Guide](tools/trace.md). |
@@ -510,8 +512,8 @@ The **TV** needs Android 8.0 (API 26) or newer: `minSdk` is a compile-time floor
 |---|---|
 | **Configure** | Dock order, hidden apps, Live TV app, 4 to 7 tiles per row, reduced motion. All in [`config.xml`](launcher/app/src/main/res/values/config.xml) |
 | **Settings on the TV** | Hold OK on Settings for launcher settings. Optional `launcher_settings_button` makes a normal click open them directly; TV settings remain on the settings page and their app tile. |
-| **Themes** | Background, wallpaper and layout from a `config.json` pushed over Wi-Fi, no rebuild. eight ship in [`themes/`](themes/), the built-in `default/` included |
-| **25 languages** | Follows the TV's language, with a fully mirrored right-to-left layout for Hebrew |
+| **Themes** | Background, wallpaper and layout from a `config.json` pushed over Wi-Fi, no rebuild. ten ship in [`themes/`](themes/), the built-in `default/` included |
+| **25 languages** | Follows the TV's language, with fully mirrored right-to-left layouts for Arabic and Hebrew |
 | **App library** | Optional: browse every installed app and add or remove Home shortcuts. See [the app library guide](docs/app-library.md) |
 | **Tile menu** | Optional (`tile_menu`): hold OK on a tile for Move, Remove from Home and App info. Off, holding OK opens App info |
 | **Module cards** | Any TV app can offer its own tile; you approve each one once. See [`docs/modules.md`](docs/modules.md) |
