@@ -67,7 +67,7 @@ del() { echo "rm -f $DIR/$1 2>/dev/null; content delete --uri $URI/$1 2>/dev/nul
 CLEAR_WALLPAPERS="mkdir -p $DIR/wallpapers 2>/dev/null; rm -f $DIR/wallpapers/*.[jJ][pP][gG] $DIR/wallpapers/*.[jJ][pP][eE][gG] $DIR/wallpapers/*.[pP][nN][gG] $DIR/wallpapers/*.[wW][eE][bB][pP] 2>/dev/null; content delete --uri $URI/wallpapers 2>/dev/null"
 
 if [ "${1:-}" = --reset ]; then
-  tv "mkdir -p $DIR 2>/dev/null; $(del config.json); $(del wallpaper.jpg); $(del wallpapers/captions.txt); $CLEAR_WALLPAPERS; printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision); $RESTART; echo reset" | tail -n 1
+  tv "mkdir -p $DIR 2>/dev/null; $(del config.json); $(del wallpaper.jpg); $(del wallpapers/captions.txt); $(del weather.json); $CLEAR_WALLPAPERS; printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision); $RESTART; echo reset" | tail -n 1
   exit 0
 fi
 THEME="${THEME_ARG:?usage: theme.sh <theme folder> | --reset}"
@@ -103,6 +103,14 @@ if [ -f "$THEME/wallpapers/captions.txt" ]; then
   tv "$(put wallpapers/captions.txt)" >/dev/null
 else
   tv "$(del wallpapers/captions.txt)" >/dev/null
+fi
+# The weather line's data (show_weather_line); written by tools/weather.py, never by the launcher.
+# A theme without it leaves no stale file behind.
+if [ -f "$THEME/weather.json" ]; then
+  "$PY" -I b64push.py "$THEME/weather.json" "$(stage weather.json)"
+  tv "$(put weather.json)" >/dev/null
+else
+  tv "$(del weather.json)" >/dev/null
 fi
 tv "printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision)" >/dev/null
 tv "$RESTART; echo applied" | tail -n 1

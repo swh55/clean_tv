@@ -56,7 +56,7 @@ function Drop($name) { "rm -f $dir/$name 2>/dev/null; content delete --uri $uri/
 $clearWallpapers = "mkdir -p $dir/wallpapers 2>/dev/null; rm -f $dir/wallpapers/*.jpg $dir/wallpapers/*.jpeg $dir/wallpapers/*.png $dir/wallpapers/*.webp $dir/wallpapers/*.JPG $dir/wallpapers/*.JPEG $dir/wallpapers/*.PNG $dir/wallpapers/*.WEBP 2>/dev/null; content delete --uri $uri/wallpapers 2>/dev/null"
 
 if ($Reset) {
-    & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision'); $restart; echo reset"
+    & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $(Drop 'weather.json'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision'); $restart; echo reset"
     exit 0
 }
 if (-not $Theme) { throw 'usage: theme.ps1 <theme folder> | -Reset' }
@@ -85,6 +85,14 @@ if (Test-Path $captions -PathType Leaf) {
     & $py -I tv.py (Put 'wallpapers/captions.txt') | Out-Null
 } else {
     & $py -I tv.py (Drop 'wallpapers/captions.txt') | Out-Null
+# The weather line's data (show_weather_line); written by tools/weather.py, never by the launcher.
+# A theme without it leaves no stale file behind.
+$weather = Join-Path $Theme 'weather.json'
+if (Test-Path $weather -PathType Leaf) {
+    & $py -I b64push.py $weather (Stage 'weather.json')
+    & $py -I tv.py (Put 'weather.json') | Out-Null
+} else {
+    & $py -I tv.py (Drop 'weather.json') | Out-Null
 }
 & $py -I tv.py "printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision')" | Out-Null
 & $py -I tv.py "$restart; echo applied"

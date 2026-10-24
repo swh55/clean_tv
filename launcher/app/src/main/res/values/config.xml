@@ -200,6 +200,14 @@
     <!-- Show the Solar Hijri (Shamsi) date used in Iran and Afghanistan, e.g. "27 Mehr 1405", above the
          Gregorian date. -->
     <bool name="shamsi_date">false</bool>
+    <!-- Show the Islamic (tabular civil) Hijri date, e.g. "14 Rabi al-Akhir 1448", above the Gregorian
+         date ("14 ربيع الآخر 1448هـ" in Arabic). The arithmetic calendar can sit a day either side of
+         local moon sighting; hijri_adjust shifts it. Can also be set with "hijri_date": true in a
+         theme's config.json. -->
+    <bool name="hijri_date">false</bool>
+    <!-- Days to shift the Hijri date, -2 to 2, to follow local moon sighting. Can also be set with
+         "hijri_adjust" in a theme's config.json. -->
+    <integer name="hijri_adjust">0</integer>
     <!-- Lunisolar (Vietnamese / Chinese) date under the date; config.json lunar_date, lunar_utc_offset (7 or 8, default by locale). -->
     <bool name="lunar_date">false</bool>
 
@@ -350,6 +358,34 @@
     <!-- One line under the clock: CPU, free memory and free storage. Off by default; a theme can set
          "show_stats": true. Nothing is read, and the clock does not move, while this is false. -->
     <bool name="show_stats">false</bool>
+
+    <!-- One line under the clock: the next prayer with its time and the countdown, computed on the TV
+         from the sun's position (no network) at config.xml's latitude and longitude (docs/sky.md explains
+         those two; a build sets them). With either empty, the line stays off. Can also be set with
+         "show_prayer_line": true in a theme's config.json. -->
+    <bool name="show_prayer_line">false</bool>
+    <!-- Which convention the prayer line uses, by its usual short name: MWL (the Muslim World League,
+         the default), ISNA, Egypt, Makkah (Umm al-Qura, Isha 90 minutes after Maghrib), Karachi or
+         Turkey. An unknown name falls back to MWL. Can also be set with "prayer_method" in a theme's
+         config.json. -->
+    <string name="prayer_method" translatable="false">MWL</string>
+
+    <!-- One line under the clock: the temperature and conditions, from a weather.json pushed next to the
+         theme (tools/weather.py fetches Open-Meteo on the computer and pushes it; the launcher itself
+         never goes online). Without that file the line stays hidden. Can also be set with
+         "show_weather_line": true in a theme's config.json. -->
+    <bool name="show_weather_line">false</bool>
+
+    <!-- On 1-3 Shawwal and 10-13 Dhu al-Hijjah of the tabular Hijri calendar, the greeting becomes "Eid
+         Mubarak" (Eid al-Fitr / Eid al-Adha). Off by default; a theme can set "eid_greeting": true. A
+         festival skin's own greeting wins while one is active. -->
+    <bool name="eid_greeting">false</bool>
+
+    <!-- A PIN for the App library: opening it asks for the code first, so hidden apps and Home choices
+         stay out of children's reach. 4 to 8 digits; empty leaves the library unlocked. The unlock lasts
+         until the launcher's process ends (a reboot or force stop re-locks it). Can also be set with
+         "library_pin" in a theme's config.json. -->
+    <string name="library_pin" translatable="false"></string>
 
     <!-- Time-of-day backdrop behind everything: a dark gradient that follows the clock, with a warm
          horizon glow around sunrise and sunset. 0 keeps the plain background (the default); 1 to 100

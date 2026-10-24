@@ -47,6 +47,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -67,6 +68,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.PopupWindow;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -190,6 +192,24 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** config.xml show_stats, overridable by a theme. Off: the line is gone and nothing is read. */
     private boolean showStats;
     private boolean shamsi;
+    /** hijri_date: the Islamic (tabular) Hijri date above the Gregorian one, and its moon-sighting shift. */
+    private TextView hijriDate;
+    private boolean hijri;
+    private int hijriAdjust;
+    /** show_prayer_line: the next prayer with its time and countdown, computed on the TV from the sun. */
+    private TextView prayerLine;
+    private boolean showPrayerLine;
+    private int prayerMethod;
+    /** show_weather_line: temperature and conditions from a pushed weather.json; never fetched here. */
+    private TextView weatherLine;
+    private boolean showWeatherLine;
+    /** eid_greeting: "Eid Mubarak" on the tabular Eid days, while no festival skin is active. */
+    private boolean eidGreeting;
+    /** library_pin: the App library asks for it once per process; empty leaves the library unlocked. */
+    private String libraryPin = "";
+    private boolean pinOpen;
+    /** True after a correct PIN, until the launcher's process ends. */
+    private static boolean pinUnlocked;
     /** greeting_name: said after the greeting, which is shown in capitals. */
     private String greetingName = "";
     /** Optional time-of-day backdrop (config.xml, sky_intensity); 0 keeps it hidden. */
@@ -360,6 +380,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         public void run() {
             updateGreeting();
             updateRace();
+            updateHeaderLines();
             // The pill follows the network callbacks and each return to Home; only the diya's flame follows the
             // signal level, so only it needs this minute's binder calls (about 7 ms on the UI thread).
             if (festive) updateWifiLabel();
@@ -478,6 +499,19 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         lunar = cfg.lunarDate;
         lunarOffset = Lunar.offsetFor(cfg.lunarUtcOffset, Locale.getDefault());
         if (lunar) lunarDate.setVisibility(View.VISIBLE);
+        hijriDate = findViewById(R.id.hijriDate);
+        hijri = cfg.hijriDate;
+        hijriAdjust = cfg.hijriAdjust;
+        if (hijri) hijriDate.setVisibility(View.VISIBLE);
+        prayerLine = findViewById(R.id.prayerLine);
+        showPrayerLine = cfg.showPrayerLine;
+        prayerMethod = PrayerTimes.methodIndex(cfg.prayerMethod);
+        if (showPrayerLine) prayerLine.setVisibility(View.VISIBLE);
+        weatherLine = findViewById(R.id.weatherLine);
+        showWeatherLine = cfg.showWeatherLine;
+        if (showWeatherLine) weatherLine.setVisibility(View.VISIBLE);
+        eidGreeting = cfg.eidGreeting;
+        libraryPin = cfg.libraryPin;
         greetingName = cfg.greetingName;
         if (shamsi) {
             shamsiDate.setVisibility(View.VISIBLE);
@@ -939,6 +973,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (openLiveTvAfterBoot()) return;
         updateGreeting();
         updateRace();
+        updateHeaderLines();
         // The network and Inputs pills keep their state while Home is in the background, and callbacks update them
         // when the network or the inputs change, so this refresh only catches anything missed. Its binder calls
         // (about 7 ms on a TCL C755, most of it WifiManager.getConnectionInfo) would hold up the first frame back
@@ -1558,6 +1593,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     public void onLibraryRequested() {
+        if (!pinUnlocked && !libraryPin.isEmpty()) {
+            promptPin();
+            return;
+        }
         if (appLibrary != null) appLibrary.close();
         if (openPopup != null) openPopup.dismiss();
         libraryFocusPending = false;
@@ -1577,6 +1616,73 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         });
         openPopup = appLibrary.popup;
         appLibrary.show();
+    }
+
+    /**
+     * The library PIN dialog: a small dark panel with a numeric field, in the card prompt's style. A
+     * correct code unlocks the library for the rest of the process; a wrong one clears the field.
+     */
+    private void promptPin() {
+        if (pinOpen) return;
+        pinOpen = true;
+        float density = getResources().getDisplayMetrics().density;
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (24 * density);
+        box.setPadding(pad, pad, pad, pad);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(0xF2111216);
+        bg.setCornerRadius(18 * density);
+        box.setBackground(bg);
+
+        TextView title = new TextView(this);
+        title.setText(R.string.pin_title);
+        title.setTextColor(0xFFFFFFFF);
+        title.setTextSize(16);
+        title.setPadding(0, 0, 0, (int) (10 * density));
+        box.addView(title);
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        input.setHint(R.string.pin_hint);
+        input.setTextColor(0xFFFFFFFF);
+        input.setHintTextColor(0x66FFFFFF);
+        input.setTextSize(18);
+        box.addView(input);
+
+        final Dialog[] dialog = new Dialog[1];
+
+        TextView unlock = new TextView(this);
+        unlock.setText(R.string.pin_ok);
+        unlock.setTextColor(0xFFFFFFFF);
+        unlock.setTextSize(15);
+        int padV = (int) (10 * density);
+        unlock.setPadding(0, padV, 0, 0);
+        unlock.setOnClickListener(v -> {
+            if (libraryPin.equals(input.getText().toString())) {
+                pinUnlocked = true;
+                dialog[0].dismiss();
+                onLibraryRequested();
+            } else {
+                input.getText().clear();
+                Toast.makeText(this, R.string.pin_wrong, Toast.LENGTH_SHORT).show();
+            }
+        });
+        box.addView(unlock);
+
+        dialog[0] = new Dialog(this);
+        dialog[0].requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog[0].setContentView(box);
+        dialog[0].setCanceledOnTouchOutside(true);
+        Window w = dialog[0].getWindow();
+        if (w != null) {
+            w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            w.setLayout((int) (320 * density), ViewGroup.LayoutParams.WRAP_CONTENT);
+            w.setDimAmount(0.6f);
+        }
+        dialog[0].setOnDismissListener(d -> pinOpen = false);
+        dialog[0].show();
+        input.requestFocus();
     }
 
     @Override
@@ -2434,16 +2540,119 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             else res = R.string.good_night;
         }
         String festiveGreeting = festive ? festival.greetingText(getResources()) : "";
+        int[] hijriToday = hijri || eidGreeting ? Hijri.today(hijriAdjust) : null;
+        int eid = eidGreeting && hijriToday != null ? eid(hijriToday) : 0;
         if (!festiveGreeting.isEmpty()) {
             greeting.setText(festiveGreeting);
             greeting.setTextColor(liftTowardsWhite(festival.accentColor(), 0.25f));
+        } else if (eid != 0) {
+            // Eid al-Fitr (1-3 Shawwal) and Eid al-Adha (10-13 Dhu al-Hijjah) of the tabular calendar.
+            greeting.setText(getString(eid == 1 ? R.string.eid_fitr_greeting : R.string.eid_adha_greeting));
+            greeting.setTextColor(greetingColor);
         } else {
             greeting.setText(greetingName.isEmpty() ? getString(res)
                     : getString(R.string.greeting_with_name, getString(res), greetingName));
             greeting.setTextColor(greetingColor);
         }
         if (shamsi) shamsiDate.setText(Shamsi.today(getResources()));
+        if (hijri && hijriToday != null) hijriDate.setText(Hijri.format(getResources(), hijriToday));
         if (lunar) lunarDate.setText(Lunar.today(getResources(), lunarOffset));
+    }
+
+    /** 1 for Eid al-Fitr (1-3 Shawwal), 2 for Eid al-Adha (10-13 Dhu al-Hijjah), 0 otherwise. */
+    private static int eid(int[] h) {
+        if (h[1] == 10 && h[2] <= 3) return 1;
+        if (h[1] == 12 && h[2] >= 10 && h[2] <= 13) return 2;
+        return 0;
+    }
+
+    // ---- the prayer and weather lines --------------------------------------------------------------
+
+    /** The two optional lines under the clock, set once a minute with it, like the race panel: text only. */
+    private void updateHeaderLines() {
+        if (showPrayerLine) updatePrayerLine();
+        if (showWeatherLine) updateWeatherLine();
+    }
+
+    private void updatePrayerLine() {
+        double lat = place(R.string.latitude);
+        double lng = place(R.string.longitude);
+        double[] t = Double.isNaN(lat) || Double.isNaN(lng)
+                ? null : PrayerTimes.compute(LocalDate.now(), lat, lng, prayerMethod);
+        if (t == null) {
+            prayerLine.setVisibility(View.GONE);
+            return;
+        }
+        prayerLine.setVisibility(View.VISIBLE);
+        double now = nowHours();
+        int next = -1;
+        for (int i = 0; i < t.length; i++) {
+            if (i == 1) continue;   // sunrise is not a prayer
+            if (t[i] > now) {
+                next = i;
+                break;
+            }
+        }
+        // After Isha the next is tomorrow's Fajr, shown at its own clock time.
+        String name = getString(next >= 0 ? prayerName(next) : R.string.prayer_fajr);
+        double at = next >= 0 ? t[next] : t[0] + 24.0;
+        int minutes = (int) Math.max(0, Math.round((at - now) * 60.0));
+        prayerLine.setText(getString(R.string.prayer_line_next, name, clock(at),
+                getString(R.string.prayer_countdown, minutes / 60, minutes % 60)));
+    }
+
+    private void updateWeatherLine() {
+        Weather.Data w = Weather.read(Config.dir(this));
+        if (w == null) {
+            weatherLine.setVisibility(View.GONE);
+            return;
+        }
+        weatherLine.setVisibility(View.VISIBLE);
+        weatherLine.setText(getString(R.string.weather_line_format,
+                String.format(java.util.Locale.ROOT, "%.0f", w.tempC), getString(weatherWord(w.code))));
+    }
+
+    private int prayerName(int i) {
+        return new int[]{R.string.prayer_fajr, R.string.prayer_sunrise, R.string.prayer_dhuhr,
+                R.string.prayer_asr, R.string.prayer_maghrib, R.string.prayer_isha}[i];
+    }
+
+    private int weatherWord(int code) {
+        switch (Weather.bucket(code)) {
+            case "weather_clear": return R.string.weather_clear;
+            case "weather_partly": return R.string.weather_partly;
+            case "weather_drizzle": return R.string.weather_drizzle;
+            case "weather_rain": return R.string.weather_rain;
+            case "weather_snow": return R.string.weather_snow;
+            case "weather_thunder": return R.string.weather_thunder;
+            default: return R.string.weather_cloudy;
+        }
+    }
+
+    /** A decimal-degrees coordinate from config.xml (docs/sky.md); NaN when unset or unusable. */
+    private double place(int res) {
+        try {
+            return Double.parseDouble(getString(res).trim());
+        } catch (NumberFormatException e) {
+            return Double.NaN;
+        }
+    }
+
+    private static double nowHours() {
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        return c.get(java.util.Calendar.HOUR_OF_DAY) + c.get(java.util.Calendar.MINUTE) / 60.0
+                + c.get(java.util.Calendar.SECOND) / 3600.0;
+    }
+
+    /** "9:41" from hours-of-day; a time past midnight (tomorrow's Fajr) wraps to its own clock hour. */
+    private static String clock(double hours) {
+        int h = (int) Math.floor(hours) % 24;
+        int m = (int) Math.round((hours - Math.floor(hours)) * 60.0);
+        if (m == 60) {
+            m = 0;
+            h = (h + 1) % 24;
+        }
+        return String.format(java.util.Locale.ROOT, "%d:%02d", h, m);
     }
 
     // ---- race-weekend panel (a theme's race_calendar) -----------------------------------------------

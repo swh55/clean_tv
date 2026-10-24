@@ -88,8 +88,22 @@ final class Config {
     /** Lunisolar date under the date (config.json lunar_date), computed for lunarUtcOffset hours east of UTC (-1: by locale). */
     final boolean lunarDate;
     final int lunarUtcOffset;
+    /** Islamic (tabular civil) Hijri date above the Gregorian one (config.json hijri_date). */
+    final boolean hijriDate;
+    /** Days to shift the Hijri date for local moon sighting (-2 to 2, config.json hijri_adjust). */
+    final int hijriAdjust;
     /** Name after the greeting ("Good morning, Mr. Trịnh"); empty for the greeting alone. */
     final String greetingName;
+    /** One line under the clock: the next prayer, its time and the countdown, computed on the TV. */
+    final boolean showPrayerLine;
+    /** The prayer line's convention: MWL, ISNA, Egypt, Makkah, Karachi or Turkey; unknown means MWL. */
+    final String prayerMethod;
+    /** One line under the clock: temperature and conditions from a pushed weather.json (never fetched here). */
+    final boolean showWeatherLine;
+    /** The greeting becomes "Eid Mubarak" on 1-3 Shawwal and 10-13 Dhu al-Hijjah. Off by default. */
+    final boolean eidGreeting;
+    /** The App library's PIN, 4 to 8 digits; empty leaves it unlocked. */
+    final String libraryPin;
     final boolean moduleCards;
     /** Calmer motion for weak GPUs (config.xml, reduced_motion): stiff spring, short fades, no replay. */
     final boolean reducedMotion;
@@ -250,7 +264,8 @@ final class Config {
                    List<RaceWeekend.Race> raceCalendar, boolean cinematicHome, boolean ambientGlow, boolean appGlow, boolean fadeRows, int homeIdleClockMinutes,
                    boolean keyFilter, boolean dockGlass, String glowStyle, boolean wallpaperCaptions,
                    boolean handleViewInputs, boolean tileMenu, boolean dockEvenPadding, boolean cinematicDots, boolean cinematicWhiteFocus, boolean wifiStatusColor, int cinematicScrim, int cinematicArt,
-                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough, boolean consumeVolumeKeys, boolean wifiStatusWarnings, List<String> topBarApps, boolean showGreeting, boolean headerWhite, boolean clockWallpaper, int clockWallpaperDim, boolean clockGlow, String glassStyle, boolean singleRow, boolean dockBandAll, boolean lunarDate, int lunarUtcOffset) {
+                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough, boolean consumeVolumeKeys, boolean wifiStatusWarnings, List<String> topBarApps, boolean showGreeting, boolean headerWhite, boolean clockWallpaper, int clockWallpaperDim, boolean clockGlow, String glassStyle, boolean singleRow, boolean dockBandAll, boolean lunarDate, int lunarUtcOffset,
+                   boolean hijriDate, int hijriAdjust, boolean showPrayerLine, String prayerMethod, boolean showWeatherLine, boolean eidGreeting, String libraryPin) {
         this.handleViewInputs = handleViewInputs;
         this.tileMenu = tileMenu;
         this.inputKeycodes = inputKeycodes;
@@ -280,6 +295,13 @@ final class Config {
         this.shamsiDate = shamsiDate;
         this.lunarDate = lunarDate;
         this.lunarUtcOffset = lunarUtcOffset;
+        this.hijriDate = hijriDate;
+        this.hijriAdjust = hijriAdjust;
+        this.showPrayerLine = showPrayerLine;
+        this.prayerMethod = prayerMethod;
+        this.showWeatherLine = showWeatherLine;
+        this.eidGreeting = eidGreeting;
+        this.libraryPin = libraryPin;
         this.greetingName = greetingName;
         this.moduleCards = moduleCards;
         this.reducedMotion = reducedMotion;
@@ -392,6 +414,13 @@ final class Config {
         boolean shamsi = res.getBoolean(R.bool.shamsi_date);
         boolean lunar = res.getBoolean(R.bool.lunar_date);
         int lunarOffset = -1;
+        boolean hijri = res.getBoolean(R.bool.hijri_date);
+        int hijriAdjust = res.getInteger(R.integer.hijri_adjust);
+        boolean showPrayerLine = res.getBoolean(R.bool.show_prayer_line);
+        String prayerMethod = res.getString(R.string.prayer_method);
+        boolean showWeatherLine = res.getBoolean(R.bool.show_weather_line);
+        boolean eidGreeting = res.getBoolean(R.bool.eid_greeting);
+        String libraryPin = pin(res.getString(R.string.library_pin));
         String greetingName = res.getString(R.string.greeting_name).trim();
         boolean moduleCards = res.getBoolean(R.bool.module_cards);
         boolean reducedMotion = res.getBoolean(R.bool.reduced_motion);
@@ -486,6 +515,13 @@ final class Config {
             shamsi = bool(json, "shamsi_date", shamsi);
             lunar = bool(json, "lunar_date", lunar);
             lunarOffset = integer(json, "lunar_utc_offset", lunarOffset, -1, 14);
+            hijri = bool(json, "hijri_date", hijri);
+            hijriAdjust = integer(json, "hijri_adjust", hijriAdjust, -2, 2);
+            showPrayerLine = bool(json, "show_prayer_line", showPrayerLine);
+            prayerMethod = string(json, "prayer_method", prayerMethod);
+            showWeatherLine = bool(json, "show_weather_line", showWeatherLine);
+            eidGreeting = bool(json, "eid_greeting", eidGreeting);
+            libraryPin = pin(string(json, "library_pin", libraryPin));
             greetingName = string(json, "greeting_name", greetingName).trim();
             moduleCards = bool(json, "module_cards", moduleCards);
             reducedMotion = bool(json, "reduced_motion", reducedMotion);
@@ -605,7 +641,8 @@ final class Config {
                 Math.max(0, Math.min(100, skyIntensity)), settingsKeycodes, settingsKeyPanel, restoreKeyServices, wallpaperEnabled, wallpaper,
                 wallpapers, rotationMinutes, wallpaperDim, dockOpacity, wallpaperOrder, applied,
                 festival, inputKeycodes, appKeys, stockHomeRedirect, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, ambientGlow, appGlow, fadeRows,
-                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough, consumeVolumeKeys, wifiStatusWarnings, topBarApps, showGreeting, headerWhite, clockWallpaper, Math.max(0, Math.min(90, clockWallpaperDim)), clockGlow, glassStyle, singleRow && dockRow, dockBandAll, lunar, lunarOffset);
+                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough, consumeVolumeKeys, wifiStatusWarnings, topBarApps, showGreeting, headerWhite, clockWallpaper, Math.max(0, Math.min(90, clockWallpaperDim)), clockGlow, glassStyle, singleRow && dockRow, dockBandAll, lunar, lunarOffset,
+                hijri, Math.max(-2, Math.min(2, hijriAdjust)), showPrayerLine, prayerMethod, showWeatherLine, eidGreeting, libraryPin);
     }
 
     /**
@@ -753,6 +790,12 @@ final class Config {
     private static boolean bool(JSONObject o, String key, boolean fallback) {
         Object v = o.opt(key);
         return v instanceof Boolean ? (Boolean) v : fallback;
+    }
+
+    /** The App library's PIN: 4 to 8 digits, or empty (unlocked) for anything else. */
+    private static String pin(String value) {
+        String v = value == null ? "" : value.trim();
+        return v.length() >= 4 && v.length() <= 8 && v.matches("\\d{4,8}") ? v : "";
     }
 
     private static int integer(JSONObject o, String key, int fallback, int min, int max) {

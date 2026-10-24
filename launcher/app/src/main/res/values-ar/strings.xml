@@ -95,4 +95,49 @@
         <item quantity="other">%1$d تطبيق</item>
     </plurals>
     <string name="greeting_with_name">%1$s، %2$s</string>
+
+    <!-- التاريخ الهجري (hijri_date): أسماء الأشهر وترتيب اليوم-الشهر-السنة مع لفظ الهجرة. -->
+    <string name="hijri_month_muharram">محرم</string>
+    <string name="hijri_month_safar">صفر</string>
+    <string name="hijri_month_rabi_al_awwal">ربيع الأول</string>
+    <string name="hijri_month_rabi_al_akhir">ربيع الآخر</string>
+    <string name="hijri_month_jumada_al_ula">جمادى الأولى</string>
+    <string name="hijri_month_jumada_al_akhira">جمادى الآخرة</string>
+    <string name="hijri_month_rajab">رجب</string>
+    <string name="hijri_month_shaban">شعبان</string>
+    <string name="hijri_month_ramadan">رمضان</string>
+    <string name="hijri_month_shawwal">شوال</string>
+    <string name="hijri_month_dhu_al_qidah">ذو القعدة</string>
+    <string name="hijri_month_dhu_al_hijjah">ذو الحجة</string>
+    <string name="hijri_date_format">%1$d %2$s %3$dهـ</string>
+
+    <!-- سطر الصلاة القادمة (show_prayer_line): أسماء الصلوات ثم السطر والعدّاد. -->
+    <string name="prayer_fajr">الفجر</string>
+    <string name="prayer_sunrise">الشروق</string>
+    <string name="prayer_dhuhr">الظهر</string>
+    <string name="prayer_asr">العصر</string>
+    <string name="prayer_maghrib">المغرب</string>
+    <string name="prayer_isha">العشاء</string>
+    <string name="prayer_line_next">%1$s %2$s · بعد %3$s</string>
+    <string name="prayer_countdown">%1$d:%2$02d</string>
+
+    <!-- سطر الطقس (show_weather_line): الحرجة ثم حالة الجو. -->
+    <string name="weather_line_format">%1$s° · %2$s</string>
+    <string name="weather_clear">صافٍ</string>
+    <string name="weather_partly">غيوم جزئية</string>
+    <string name="weather_cloudy">غائم</string>
+    <string name="weather_drizzle">رذاذ</string>
+    <string name="weather_rain">مطر</string>
+    <string name="weather_snow">ثلج</string>
+    <string name="weather_thunder">عواصف رعدية</string>
+
+    <!-- تحيتا العيدين (eid_greeting): عيد الفطر وعيد الأضحى. -->
+    <string name="eid_fitr_greeting">عيد فطر مبارك</string>
+    <string name="eid_adha_greeting">عيد أضحى مبارك</string>
+
+    <!-- رمز مكتبة التطبيقات (library_pin): نافذة الفتح. -->
+    <string name="pin_title">مكتبة التطبيقات مقفلة</string>
+    <string name="pin_hint">أدخل رمز القفل</string>
+    <string name="pin_ok">فتح</string>
+    <string name="pin_wrong">رمز خاطئ</string>
 </resources>

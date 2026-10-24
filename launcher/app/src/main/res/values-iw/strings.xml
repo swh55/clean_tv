@@ -144,4 +144,49 @@
     <string name="race_countdown_hours">%1$d שע׳ %2$d דק׳</string>
     <string name="race_countdown_days">%1$d ימ׳ %2$d שע׳</string>
     <string name="last_opened">פתיחה אחרונה: %1$s</string>
+
+    <!-- התאריך ההיג'רי (hijri_date): שמות החודשים וסדר יום-חודש-שנה. -->
+    <string name="hijri_month_muharram">מוחרם</string>
+    <string name="hijri_month_safar">ספר</string>
+    <string name="hijri_month_rabi_al_awwal">רביע אל-אוול</string>
+    <string name="hijri_month_rabi_al_akhir">רביע אל-אח\'ר</string>
+    <string name="hijri_month_jumada_al_ula">ג\'ומאדא אל-אולא</string>
+    <string name="hijri_month_jumada_al_akhira">ג\'ומאדא אל-אח\'רה</string>
+    <string name="hijri_month_rajab">רג\'ב</string>
+    <string name="hijri_month_shaban">שעבאן</string>
+    <string name="hijri_month_ramadan">רמדאן</string>
+    <string name="hijri_month_shawwal">שוואל</string>
+    <string name="hijri_month_dhu_al_qidah">ד\'ו אל-קעדה</string>
+    <string name="hijri_month_dhu_al_hijjah">ד\'ו אל-חיג\'ה</string>
+    <string name="hijri_date_format">%1$d %2$s %3$d</string>
+
+    <!-- שורת התפילה הבאה (show_prayer_line): שמות התפילות, השורה והספירה לאחור. -->
+    <string name="prayer_fajr">פג\'ר</string>
+    <string name="prayer_sunrise">הזריחה</string>
+    <string name="prayer_dhuhr">ד\'והר</string>
+    <string name="prayer_asr">עסר</string>
+    <string name="prayer_maghrib">מע\'ריב</string>
+    <string name="prayer_isha">עישא</string>
+    <string name="prayer_line_next">%1$s %2$s · בעוד %3$s</string>
+    <string name="prayer_countdown">%1$d:%2$02d</string>
+
+    <!-- שורת מזג האוויר (show_weather_line): הטמפרטורה ואחריה מצב מזג האוויר. -->
+    <string name="weather_line_format">%1$s° · %2$s</string>
+    <string name="weather_clear">בהיר</string>
+    <string name="weather_partly">מעונן חלקית</string>
+    <string name="weather_cloudy">מעונן</string>
+    <string name="weather_drizzle">טפטוף</string>
+    <string name="weather_rain">גשם</string>
+    <string name="weather_snow">שלג</string>
+    <string name="weather_thunder">סופות רעמים</string>
+
+    <!-- ברכות העיד (eid_greeting): עיד אל-פיטר ועיד אל-אדחא. -->
+    <string name="eid_fitr_greeting">עיד אל-פיטר מובארק</string>
+    <string name="eid_adha_greeting">עיד אל-אדחא מובארק</string>
+
+    <!-- קוד ה-PIN של ספריית האפליקציות (library_pin): דו-השיח לפתיחה. -->
+    <string name="pin_title">ספריית האפליקציות נעולה</string>
+    <string name="pin_hint">הזן את קוד ה-PIN</string>
+    <string name="pin_ok">פתיחה</string>
+    <string name="pin_wrong">קוד שגוי</string>
 </resources>

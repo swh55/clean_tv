@@ -255,6 +255,21 @@
                             android:includeFontPadding="false"
                             android:visibility="gone" />
 
+                        <!-- Hijri date ("14 Rabi al-Akhir 1448"), shown when hijri_date is on. -->
+                        <TextView
+                            android:id="@+id/hijriDate"
+                            android:gravity="left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            android:textColor="#E6FFFFFF"
+                            android:textSize="17sp"
+                            android:fontFamily="@string/font_regular"
+                            android:letterSpacing="0.02"
+                            android:includeFontPadding="false"
+                            android:visibility="gone" />
+
                         <TextClock
                             android:id="@+id/date"
                             android:gravity="left"
@@ -298,6 +313,44 @@
                 android:id="@+id/stats"
                 android:layout_width="wrap_content"
                 android:layout_below="@id/leftBlock"
+                android:layout_alignStart="@id/leftBlock"
+                android:gravity="left"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="#D9FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="@string/font_medium"
+                android:letterSpacing="0.04"
+                android:focusable="false"
+                android:visibility="gone" />
+
+            <!-- Shown only when show_prayer_line is on: the next prayer with its time and the countdown,
+                 computed on the TV. Below the stats line, so the two can stack. -->
+            <TextView
+                android:id="@+id/prayerLine"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/stats"
+                android:layout_alignStart="@id/leftBlock"
+                android:gravity="left"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="#D9FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="@string/font_medium"
+                android:letterSpacing="0.04"
+                android:focusable="false"
+                android:visibility="gone" />
+
+            <!-- Shown only when show_weather_line is on and a weather.json was pushed (tools/weather.py);
+                 the launcher itself never goes online. -->
+            <TextView
+                android:id="@+id/weatherLine"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/prayerLine"
                 android:layout_alignStart="@id/leftBlock"
                 android:gravity="left"
                 android:layout_height="wrap_content"

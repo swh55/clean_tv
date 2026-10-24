@@ -148,4 +148,50 @@
     <!-- Cinematic top shelf (cinematic_home): the line under the focused dock app's name; %1$s is when it was
          last opened, e.g. "5 minutes ago" or "yesterday, 9:40 pm". -->
     <string name="last_opened">Last opened %1$s</string>
+
+    <!-- The Islamic (Hijri) date (hijri_date): month names, then the day-month-year order (values-ar puts
+         the هـ era mark after the year). -->
+    <string name="hijri_month_muharram">Muharram</string>
+    <string name="hijri_month_safar">Safar</string>
+    <string name="hijri_month_rabi_al_awwal">Rabi al-Awwal</string>
+    <string name="hijri_month_rabi_al_akhir">Rabi al-Akhir</string>
+    <string name="hijri_month_jumada_al_ula">Jumada al-Ula</string>
+    <string name="hijri_month_jumada_al_akhira">Jumada al-Akhira</string>
+    <string name="hijri_month_rajab">Rajab</string>
+    <string name="hijri_month_shaban">Shaban</string>
+    <string name="hijri_month_ramadan">Ramadan</string>
+    <string name="hijri_month_shawwal">Shawwal</string>
+    <string name="hijri_month_dhu_al_qidah">Dhu al-Qidah</string>
+    <string name="hijri_month_dhu_al_hijjah">Dhu al-Hijjah</string>
+    <string name="hijri_date_format">%1$d %2$s %3$d</string>
+
+    <!-- The prayer line (show_prayer_line): the five prayers, then the line and its countdown. -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Sunrise</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="prayer_line_next">%1$s %2$s · in %3$s</string>
+    <string name="prayer_countdown">%1$d:%2$02d</string>
+
+    <!-- The weather line (show_weather_line): the temperature first, then the conditions word. -->
+    <string name="weather_line_format">%1$s° · %2$s</string>
+    <string name="weather_clear">Clear</string>
+    <string name="weather_partly">Partly cloudy</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_drizzle">Drizzle</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_snow">Snow</string>
+    <string name="weather_thunder">Thunderstorms</string>
+
+    <!-- The Eid greetings (eid_greeting): the greeting text for 1-3 Shawwal and 10-13 Dhu al-Hijjah. -->
+    <string name="eid_fitr_greeting">Eid Mubarak</string>
+    <string name="eid_adha_greeting">Eid Mubarak</string>
+
+    <!-- The App library PIN (library_pin): the unlock dialog. -->
+    <string name="pin_title">App library locked</string>
+    <string name="pin_hint">Enter the PIN</string>
+    <string name="pin_ok">Unlock</string>
+    <string name="pin_wrong">Wrong PIN</string>
 </resources>

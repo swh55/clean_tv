@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Outfit has no Arabic glyphs at all, so Arabic text fell through to whatever system font each view's
+     fallback chain reached; point every weight at the system's family, which carries proper Arabic. -->
+<resources>
+    <string name="font_body" translatable="false">sans-serif</string>
+    <string name="font_regular" translatable="false">sans-serif</string>
+    <string name="font_light" translatable="false">sans-serif-light</string>
+    <string name="font_extralight" translatable="false">sans-serif-thin</string>
+    <string name="font_medium" translatable="false">sans-serif-medium</string>
+</resources>
