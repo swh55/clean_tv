@@ -91,7 +91,7 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:taskAffinity="tv.afnon.home.settings"
+            android:taskAffinity="pro.datascoop.afnon.settings"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
 
@@ -102,7 +102,7 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity="tv.afnon.home.call"
+            android:taskAffinity="pro.datascoop.afnon.call"
             android:theme="@style/Theme.Afnon.Call"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
@@ -117,7 +117,7 @@
             android:screenOrientation="landscape" />
 
         <!-- The screensaver. Made the TV's own with:
-             settings put secure screensaver_components tv.afnon.home/.AfnonDream -->
+             settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream -->
         <service
             android:name=".AfnonDream"
             android:label="@string/app_name"
@@ -130,7 +130,7 @@
         </service>
 
         <!-- Remote buttons. Turned on with:
-             settings put secure enabled_accessibility_services tv.afnon.home/.RemoteKeys -->
+             settings put secure enabled_accessibility_services pro.datascoop.afnon/.RemoteKeys -->
         <service
             android:name=".RemoteKeys"
             android:label="@string/remote_keys"

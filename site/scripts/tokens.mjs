@@ -1,5 +1,5 @@
 // Builds every design-token output from afnon-mihrab/tokens.json, the one source of truth:
-//   app/src/main/java/tv/afnon/home/Tokens.java   (Java constants, names as the app uses them)
+//   app/src/main/java/pro/datascoop/afnon/Tokens.java   (Java constants, names as the app uses them)
 //   app/src/main/res/values/colors.xml            (window background etc.)
 //   site/src/styles/tokens.css                    (CSS custom properties for the preview site)
 // `--check` writes nothing and fails if the app's committed outputs differ (for CI).
@@ -59,7 +59,7 @@ StyleDictionary.registerFormat({
       })
       .filter(Boolean)
       .join('\n');
-    return `package tv.afnon.home;
+    return `package pro.datascoop.afnon;
 
 // ${HEADER}
 
@@ -95,7 +95,7 @@ const sd = new StyleDictionary({
     },
     java: {
       transforms: ['attribute/cti', 'name/constant', 'color/hex8android'],
-      buildPath: resolve(root, 'app/src/main/java/tv/afnon/home') + '/',
+      buildPath: resolve(root, 'app/src/main/java/pro/datascoop/afnon') + '/',
       files: [{ destination: 'Tokens.java', format: 'afnon/java' }],
     },
     android: {

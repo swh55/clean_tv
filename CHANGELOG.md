@@ -4,6 +4,21 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+## [0.7] - 2026-10-24
+
+### Changed
+- **Afnon's package name is now `pro.datascoop.afnon`** (كان `tv.afnon.home`): the app installs as its own
+  app beside the original Afnon launcher instead of updating it — install this build and the TV treats it
+  as a new launcher while the original stays untouched. Every setup path uses the new name already: HOME
+  and the screensaver (`settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream`), the
+  remote's buttons (`settings put secure enabled_accessibility_services pro.datascoop.afnon/.RemoteKeys`),
+  the `tools/install.sh` helper, and the `adb` commands in the README and the Arabic install guide. The
+  original Afnon (`tv.afnon.home`) stays hidden from the app list even when both launchers are installed
+  side by side. versionCode 9 → 10.
+- Download, clone and release links in the READMEs and the Arabic install guide now point at this repo
+  (github.com/swh55/clean_tv), so `afnon.apk` always downloads this fork's build — and the CI release step
+  names the APK `afnon.apk` on every `v*` tag. The original project stays credited in the README (MIT).
+
 ## [0.6] - 2026-10-24
 
 ### Added

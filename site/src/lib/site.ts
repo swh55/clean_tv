@@ -1,7 +1,7 @@
 // Every page of the preview: one per TV screen or mode, in Arabic (default, at the root) and English (/en/).
 import type { Lang } from './text';
 
-export const REPO = 'https://github.com/egyjs/afnon-android-tv-launcher';
+export const REPO = 'https://github.com/swh55/clean_tv';
 export const APK = `${REPO}/releases/latest/download/afnon.apk`;
 
 type L = Record<Lang, string>;

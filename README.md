@@ -8,7 +8,7 @@
 
 Arabic first (RTL) and English · Offline prayer times for 136 cities · 14 adhan voices · Qibla · 16 Quran radio stations and reciters
 
-**[⬇ Download the APK](https://github.com/egyjs/afnon-android-tv-launcher/releases/latest/download/afnon.apk)** · [Releases](https://github.com/egyjs/afnon-android-tv-launcher/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
+**[⬇ Download the APK](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk)** · [Releases](https://github.com/swh55/clean_tv/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
 
 ![Afnon home screen in Arabic](docs/screenshots/home-ar.png)
 
@@ -120,17 +120,17 @@ nothing from other sites except the station's stream when you press Play, and ke
 
 ### Quick: the APK
 
-Download [`afnon.apk`](https://github.com/egyjs/afnon-android-tv-launcher/releases/latest/download/afnon.apk) from the latest release, then:
+Download [`afnon.apk`](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk) from the latest release, then:
 
 ```bash
 export TV=192.168.1.50:5555
 adb connect $TV
 adb -s $TV install -r afnon.apk
-adb -s $TV shell cmd package set-home-activity tv.afnon.home/.MainActivity
-adb -s $TV shell settings put secure screensaver_components tv.afnon.home/.AfnonDream
-adb -s $TV shell pm grant tv.afnon.home android.permission.RECORD_AUDIO
-adb -s $TV shell pm grant tv.afnon.home android.permission.WRITE_SECURE_SETTINGS
-adb -s $TV shell pm grant tv.afnon.home android.permission.ACCESS_FINE_LOCATION
+adb -s $TV shell cmd package set-home-activity pro.datascoop.afnon/.MainActivity
+adb -s $TV shell settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream
+adb -s $TV shell pm grant pro.datascoop.afnon android.permission.RECORD_AUDIO
+adb -s $TV shell pm grant pro.datascoop.afnon android.permission.WRITE_SECURE_SETTINGS
+adb -s $TV shell pm grant pro.datascoop.afnon android.permission.ACCESS_FINE_LOCATION
 ```
 
 Then turn on **Afnon remote buttons** in the TV's Settings → Accessibility. The APK includes the adhan recordings.
@@ -141,7 +141,7 @@ You need a computer with **adb**, **JDK 17**, the Android SDK (platform 34), and
 **Developer options → USB / Network debugging** on.
 
 ```bash
-git clone https://github.com/egyjs/afnon-android-tv-launcher.git
+git clone https://github.com/swh55/clean_tv.git
 cd afnon-android-tv-launcher
 export TV=192.168.1.50:5555          # your TV's address
 adb connect $TV                      # accept the prompt on the TV
@@ -178,13 +178,13 @@ in Developer options, revoke the USB debugging authorisations, reboot, and check
 ### Trying things without waiting for a prayer
 
 ```bash
-adb shell am start -n tv.afnon.home/.MainActivity --es test friday    # or ramadan, now (back to today)
-adb shell am start -n tv.afnon.home/.MainActivity --es test reminder  # Home's reminder card, spoken
-adb shell am start -n tv.afnon.home/.MainActivity --es test call      # the call screen, 8 s later
-adb shell am start -n tv.afnon.home/.MainActivity --es test banner    # the banner and its voice, 8 s later (open another app)
-adb shell am start -n tv.afnon.home/.MainActivity --es test announce  # «حان الآن موعد صلاة …», 8 s later
-adb shell am start -n tv.afnon.home/.MainActivity --es test radio     # radio on / off
-adb shell am start -n tv.afnon.home/.MainActivity --es station nablus # pick a station (ids in Radio.STATIONS)
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test friday    # or ramadan, now (back to today)
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test reminder  # Home's reminder card, spoken
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test call      # the call screen, 8 s later
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test banner    # the banner and its voice, 8 s later (open another app)
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test announce  # «حان الآن موعد صلاة …», 8 s later
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es test radio     # radio on / off
+adb shell am start -n pro.datascoop.afnon/.MainActivity --es station nablus # pick a station (ids in Radio.STATIONS)
 bash tools/shot.sh home                                               # screenshot to state/shots/
 ```
 
@@ -219,7 +219,7 @@ detects them by their hotkey service and each piece is skipped elsewhere:
 ## Project layout
 
 ```
-app/src/main/java/tv/afnon/home/
+app/src/main/java/pro/datascoop/afnon/
   MainActivity        Home: clock, dates, weather, prayer row, favourites, radio pill and card, focus map
   PrayerDayActivity   Today's prayers, Qibla dial, room direction
   AllAppsActivity     Every app; hold OK to arrange favourites
@@ -263,7 +263,7 @@ docs/install-guide-ar.md  the install guide in Arabic, with the ADB fixes for a 
 - **العربية أولًا**: من اليمين إلى اليسار، مع الإنجليزية، والأرقام عربية أو لاتينية.
 - **بلا حسابات ولا إعلانات ولا تتبّع**. الإذاعة وحدها تستخدم الإنترنت.
 
-للتثبيت حمّل ملف [`afnon.apk`](https://github.com/egyjs/afnon-android-tv-launcher/releases/latest/download/afnon.apk) من صفحة الإصدارات، أو ابنِه من المصدر كما في قسم **Install** أعلاه. وللعودة إلى الشاشة الأصلية شغّل `tools/restore.sh` ثم أعد تشغيل
+للتثبيت حمّل ملف [`afnon.apk`](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk) من صفحة الإصدارات، أو ابنِه من المصدر كما في قسم **Install** أعلاه. وللعودة إلى الشاشة الأصلية شغّل `tools/restore.sh` ثم أعد تشغيل
 التلفاز. وبعد الانتهاء أغلق «تصحيح الأخطاء عبر الشبكة» في خيارات المطوّرين.
 
 </div>

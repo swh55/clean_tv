@@ -8,7 +8,7 @@ STOCK_DREAM="${STOCK_DREAM:-com.google.android.apps.tv.dreamx/.service.Backdrop}
 LOG="$ROOT/state/disabled.log"
 if [ -f "$LOG" ]; then
   while read -r p; do
-    [ -z "$p" ] || [ "$p" = tv.afnon.home ] && continue
+    [ -z "$p" ] || [ "$p" = pro.datascoop.afnon ] && continue
     echo "$p: $(adb shell pm enable --user 0 "$p" 2>&1 | tr -d '\r')"
   done < "$LOG"
 fi
@@ -22,9 +22,9 @@ done
 adb shell settings delete global CustomKeyList >/dev/null
 # The radio turns the sleep timer off while it plays and saves the old value; put it back if it's still off.
 if [ "$(adb shell settings get secure sleep_timeout | tr -d '\r')" = "-1" ]; then
-  saved=$(adb shell "run-as tv.afnon.home cat shared_prefs/afnon.xml" 2>/dev/null | sed -n 's/.*name="sleep_saved" value="\([0-9]*\)".*/\1/p')
+  saved=$(adb shell "run-as pro.datascoop.afnon cat shared_prefs/afnon.xml" 2>/dev/null | sed -n 's/.*name="sleep_saved" value="\([0-9]*\)".*/\1/p')
   adb shell settings put secure sleep_timeout "${saved:-1800000}"
 fi
-echo "tv.afnon.home: $(adb uninstall tv.afnon.home 2>&1 | tr -d '\r')"
+echo "pro.datascoop.afnon: $(adb uninstall pro.datascoop.afnon 2>&1 | tr -d '\r')"
 adb shell am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null
 echo "Done. Reboot the TV to finish."
