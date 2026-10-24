@@ -1,0 +1,63 @@
+name: Build launcher APK
+
+# Builds the launcher every time the launcher code changes, and on demand from
+# the Actions tab ("Run workflow"). The release APK is signed with the debug key,
+# exactly like build-and-install.sh produces locally, so it sideloads over ADB.
+# Grab it from a run's artifacts, or from the latest GitHub Release.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'launcher/**'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build release APK (R8-shrunk, debug-signed)
+        working-directory: launcher
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Report APK size
+        run: |
+          APK=$(ls launcher/app/build/outputs/apk/release/*.apk)
+          echo "APK: $APK ($(du -h "$APK" | cut -f1))"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clean-tv-home-apk
+          path: launcher/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Attach to latest release (if one exists)
+        # Keeps a stable download point: the newest push replaces the asset on
+        # the existing "latest" release instead of piling up new ones.
+        run: |
+          APK=$(ls launcher/app/build/outputs/apk/release/*.apk)
+          SIZE=$(stat -c%s "$APK")
+          if gh release view latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload latest "$APK" --clobber --repo "$GITHUB_REPOSITORY"
+            echo "Attached $(basename "$APK") ($SIZE bytes) to the latest release"
+          else
+            echo "No 'latest' release yet - the APK is on this run's artifacts above"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
