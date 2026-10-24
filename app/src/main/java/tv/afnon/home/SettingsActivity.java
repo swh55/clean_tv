@@ -40,7 +40,7 @@ import java.util.function.IntConsumer;
  */
 public class SettingsActivity extends Screen {
 
-    private static final int PRAYER = 0, REMINDERS = 1, RADIO = 2, DISPLAY = 3, NETWORK = 4, DEVICE = 5, SECTIONS = 6;
+    private static final int PRAYER = 0, REMINDERS = 1, RADIO = 2, DISPLAY = 3, SECURITY = 4, NETWORK = 5, DEVICE = 6, SECTIONS = 7;
     private static final int VALUE = 0, SEG = 1, STEP = 2, TOGGLE = 3;
     private static final int SIDEBAR = Tokens.LAPIS_950;
     private static final float ROWS_TOP = 112, ROW_H = 88, ROW_GAP = 10;
@@ -113,14 +113,30 @@ public class SettingsActivity extends Screen {
     private android.media.MediaPlayer previewPlayer;
     private PrayerDay day;
 
+    // The PIN pad (Security): the gate over a locked Settings, and the set / repeat flow.
+    private static final int PIN_LEN = 4, PIN_DELETE = 9, PIN_ZERO = 10;
+    private static final String GATE = "gate", SET1 = "set1", SET2 = "set2";
+    /** The open PIN pad, or null. While it is open it swallows every key (dispatchKeyEvent). */
+    private FrameLayout pinOverlay;
+    private TextView pinTitle, pinError;
+    private final TextView[] pinDots = new TextView[PIN_LEN];
+    private final FocusTile[] pinKeys = new FocusTile[PIN_ZERO + 1];
+    private String pinStage = "";
+    private final StringBuilder pinBuf = new StringBuilder();
+    private String pinFirst;
+    private int pinFocusedKey;
+    /** True once the PIN was answered in this visit, so the pad only opens once. */
+    private boolean unlocked;
+
     @Override
     void build() {
-        // A rebuild (back with settings changed elsewhere, or a language change) drops an open chooser with the
-        // old root; left set, it would swallow every key while nothing shows.
+        // A rebuild (back with settings changed elsewhere, or a language change) drops an open chooser or PIN
+        // pad with the old root; left set, it would swallow every key while nothing shows.
         stopPreview();
         chooser = null;
         chooserBack = null;
         editing = null;
+        pinOverlay = null;   // locked() puts the gate straight back, under this build
         newRoot();
         root.setBackgroundColor(Tokens.LAPIS_900);
         readClockFormat();
@@ -177,6 +193,8 @@ public class SettingsActivity extends Screen {
         showSection();
         if (onNav || rows.isEmpty()) focusNav();
         else focusRow(Math.min(rowIndex, rows.size() - 1));
+        // A locked Settings opens under its PIN pad; the pad lifts once the four digits match.
+        if (locked()) showPinPad(GATE);
     }
 
     @Override
@@ -192,6 +210,7 @@ public class SettingsActivity extends Screen {
             case REMINDERS: return t.sectionReminders();
             case RADIO: return t.sectionRadio();
             case DISPLAY: return t.sectionDisplay();
+            case SECURITY: return t.sectionSecurity();
             case NETWORK: return t.sectionNetwork(ssid());
             default: return t.sectionDevice();
         }
@@ -389,6 +408,34 @@ public class SettingsActivity extends Screen {
                     String[] segs() { return digits(t.clocks()); }
                     int selected() { return Math.max(0, Arrays.asList(values).indexOf(Prefs.clock(c))); }
                     void select(int i) { prefs().edit().putString("clock", values[i]).apply(); readClockFormat(); }
+                },
+                new Row(TOGGLE) {
+                    String label() { return t.weatherRow(); }
+                    String help() { return t.weatherHelp(); }
+                    boolean on() { return Prefs.weather(c); }
+                    void set(boolean on) { Prefs.setWeather(c, on); }
+                });
+            case SECURITY: return Arrays.asList(
+                new Row(TOGGLE) {
+                    String label() { return t.pinLockRow(); }
+                    String help() { return Prefs.pin(c).isEmpty() ? t.pinLockHelp() : t.pinLockedNote(); }
+                    boolean on() { return !Prefs.pin(c).isEmpty(); }
+                    boolean saves() { return false; }   // the pad's own messages say what happened
+                    void set(boolean on) {
+                        if (on) {
+                            showPinPad(SET1);
+                        } else {
+                            Prefs.setPin(c, "");
+                            unlocked = true;
+                            showSaved(t.pinDisabled());
+                        }
+                    }
+                },
+                new Row(VALUE) {
+                    String label() { return t.pinChangeRow(); }
+                    String help() { return t.pinChangeHelp(); }
+                    String value() { return Prefs.pin(c).isEmpty() ? t.notSet() : "••••"; }
+                    void open() { showPinPad(SET1); }
                 });
             case NETWORK: return Arrays.asList(
                 new Row(VALUE) {
@@ -448,6 +495,231 @@ public class SettingsActivity extends Screen {
     private void relaunch() {
         loadSettings(null);
         build();
+    }
+
+    // ---------------------------------------------------------------- security: the PIN pad
+
+    private boolean locked() {
+        return !Prefs.pin(this).isEmpty() && !unlocked;
+    }
+
+    /** The pad for entering the PIN (gate) or setting a new one (set1, then set2). */
+    private void showPinPad(String stage) {
+        pinStage = stage;
+        pinBuf.setLength(0);
+        pinFirst = null;
+        if (pinOverlay != null) root.removeView(pinOverlay);
+        pinOverlay = new FrameLayout(this);
+        pinOverlay.setBackgroundColor(Tokens.SCRIM_MENU);
+        pinOverlay.setClickable(true);
+
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER_HORIZONTAL);
+        card.setPadding(Ui.ipx(48), Ui.ipx(40), Ui.ipx(48), Ui.ipx(32));
+        GradientDrawable bg = round(Tokens.LAPIS_800, 24);
+        bg.setStroke(Ui.ipx(2), Tokens.GOLD_400_60);
+        card.setBackground(bg);
+
+        pinTitle = text(displayBold, Tokens.FONT_SIZE_DISPLAY_S, Tokens.GOLD_400);
+        pinTitle.setText(GATE.equals(stage) ? t.pinEnterTitle() : t.pinSetTitle());
+        card.addView(pinTitle);
+        lineHeight(pinTitle, 1.2f);
+
+        LinearLayout dots = new LinearLayout(this);
+        dots.setGravity(Gravity.CENTER);
+        for (int i = 0; i < PIN_LEN; i++) {
+            pinDots[i] = new TextView(this);
+            LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams(Ui.ipx(20), Ui.ipx(20));
+            if (i > 0) dlp.setMarginStart(Ui.ipx(18));
+            dots.addView(pinDots[i], dlp);
+            paintDot(i);
+        }
+        LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams(-2, -2);
+        dlp.topMargin = Ui.ipx(28);
+        card.addView(dots, dlp);
+
+        // INVISIBLE, not GONE: the card keeps its height when an error comes and goes.
+        pinError = text(ui400, 22, Tokens.GOLD_400);
+        pinError.setVisibility(View.INVISIBLE);
+        LinearLayout.LayoutParams elp = new LinearLayout.LayoutParams(-2, -2);
+        elp.topMargin = Ui.ipx(12);
+        card.addView(pinError, elp);
+
+        // The digit grid keeps the dial order in both languages, like every phone keypad.
+        LinearLayout grid = new LinearLayout(this);
+        grid.setOrientation(LinearLayout.VERTICAL);
+        grid.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        for (int r = 0; r < 4; r++) {
+            LinearLayout row = new LinearLayout(this);
+            for (int k = 0; k < 3; k++) {
+                int idx = r * 3 + k;
+                View cell;
+                if (idx <= 8) cell = pinKey(String.valueOf(idx + 1), idx);
+                else if (idx == PIN_DELETE) cell = pinKey("⌫", PIN_DELETE);
+                else if (idx == PIN_ZERO) cell = pinKey("0", PIN_ZERO);
+                else cell = new View(this);   // the empty third slot under 0
+                LinearLayout.LayoutParams klp = new LinearLayout.LayoutParams(Ui.ipx(120), Ui.ipx(72 + 2 * FocusTile.REACH));
+                if (k > 0) klp.setMarginStart(Ui.ipx(16 - 2 * FocusTile.REACH));
+                row.addView(cell, klp);
+            }
+            LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-2, -2);
+            if (r > 0) rlp.topMargin = Ui.ipx(12 - 2 * FocusTile.REACH);
+            grid.addView(row, rlp);
+        }
+        LinearLayout.LayoutParams glp = new LinearLayout.LayoutParams(-2, -2);
+        glp.topMargin = Ui.ipx(28 - FocusTile.REACH);
+        card.addView(grid, glp);
+
+        pinOverlay.addView(card, new FrameLayout.LayoutParams(Ui.ipx(520), -2, Gravity.CENTER));
+        setRowsFocusable(false);
+        root.addView(pinOverlay, new FrameLayout.LayoutParams(-1, -1));
+        pinFocusedKey = 0;
+        root.post(() -> pinKeys[0].requestFocus());
+        List<String> h = new ArrayList<>();
+        h.add(GATE.equals(stage) ? t.pinLockedHint() : t.pinSetHint());
+        setHints(hints, h);
+    }
+
+    /** A digit key (or ⌫), in the lapis of the step buttons, gold when focused. */
+    private FocusTile pinKey(String label, int index) {
+        FocusTile b = new FocusTile(this, 14);
+        b.setRest(Tokens.LAPIS_700, 0, 0);
+        TextView v = text(ui500, 30, Tokens.PLASTER_100);
+        v.setText(label);
+        v.setGravity(Gravity.CENTER);
+        b.addView(v, new FrameLayout.LayoutParams(-1, -1));
+        b.setLook(f -> v.setTextColor(f ? Tokens.LAPIS_900 : Tokens.PLASTER_100));
+        b.setOnClickListener(x -> { pinFocusedKey = index; pressPinKey(index); });
+        b.setOnFocusChangeListener((v2, has) -> { if (has) pinFocusedKey = index; });
+        pinKeys[index] = b;
+        return b;
+    }
+
+    private void paintDot(int i) {
+        GradientDrawable g = new GradientDrawable();
+        g.setShape(GradientDrawable.OVAL);
+        boolean filled = i < pinBuf.length();
+        g.setColor(filled ? Tokens.GOLD_400 : 0);
+        g.setStroke(Ui.ipx(2), filled ? Tokens.GOLD_400 : Tokens.DISABLED_TEXT);
+        pinDots[i].setBackground(g);
+    }
+
+    private void refreshDots() {
+        for (int i = 0; i < PIN_LEN; i++) paintDot(i);
+    }
+
+    /** OK (or the remote's number keys, through pinKey(KeyEvent)) on a digit or ⌫. */
+    private void pressPinKey(int index) {
+        if (index == PIN_DELETE) {
+            if (pinBuf.length() > 0) {
+                pinBuf.setLength(pinBuf.length() - 1);
+                refreshDots();
+                pinError.setVisibility(View.INVISIBLE);
+            }
+            return;
+        }
+        if (pinBuf.length() >= PIN_LEN) return;
+        pinBuf.append(index == PIN_ZERO ? "0" : String.valueOf(index + 1));
+        refreshDots();
+        pinError.setVisibility(View.INVISIBLE);
+        if (pinBuf.length() == PIN_LEN) pinOverlay.postDelayed(this::pinSubmit, 180);
+    }
+
+    /** Four digits are in: verify (gate), or advance to the repeat (set1), or save (set2). */
+    private void pinSubmit() {
+        if (pinOverlay == null || pinBuf.length() < PIN_LEN) return;
+        String entered = pinBuf.toString();
+        switch (pinStage) {
+            case GATE:
+                if (Prefs.pinHash(entered).equals(Prefs.pin(this))) {
+                    unlocked = true;
+                    closePin();
+                    focusNav();
+                } else pinFailed(t.pinWrong());
+                break;
+            case SET1:
+                pinFirst = entered;
+                pinStage = SET2;
+                pinBuf.setLength(0);
+                refreshDots();
+                pinTitle.setText(t.pinRepeatTitle());
+                break;
+            default:
+                if (entered.equals(pinFirst)) {
+                    Prefs.setPin(this, Prefs.pinHash(entered));
+                    unlocked = true;
+                    closePin();
+                    refresh();
+                    focusRow(rowIndex);
+                    showSaved(t.pinEnabled());
+                } else {
+                    pinFirst = null;
+                    pinFailed(t.pinMismatch());
+                    pinStage = SET1;
+                    pinTitle.setText(t.pinSetTitle());
+                }
+                break;
+        }
+    }
+
+    /** A wrong PIN or a mismatch: the message shows, the dots empty, entry starts over. */
+    private void pinFailed(String message) {
+        pinBuf.setLength(0);
+        refreshDots();
+        pinError.setText(message);
+        pinError.setVisibility(View.VISIBLE);
+    }
+
+    private void closePin() {
+        if (pinOverlay == null) return;
+        root.removeView(pinOverlay);
+        pinOverlay = null;
+        pinStage = "";
+        pinBuf.setLength(0);
+        pinFirst = null;
+        setRowsFocusable(true);
+    }
+
+    private boolean pinKey(KeyEvent e) {
+        int k = e.getKeyCode();
+        boolean down = e.getAction() == KeyEvent.ACTION_DOWN;
+        if (k == KeyEvent.KEYCODE_BACK) {
+            if (!down) {
+                if (GATE.equals(pinStage)) finish();   // a locked Settings never opens without the PIN
+                else {
+                    closePin();
+                    focusRow(rowIndex);
+                }
+            }
+            return true;
+        }
+        int digit = -1;
+        if (k >= KeyEvent.KEYCODE_0 && k <= KeyEvent.KEYCODE_9) digit = k - KeyEvent.KEYCODE_0;
+        if (k >= KeyEvent.KEYCODE_NUMPAD_0 && k <= KeyEvent.KEYCODE_NUMPAD_9) digit = k - KeyEvent.KEYCODE_NUMPAD_0;
+        if (digit >= 0) {
+            if (down && e.getRepeatCount() == 0) pressPinKey(digit == 0 ? PIN_ZERO : digit - 1);
+            return true;
+        }
+        boolean ok = k == KeyEvent.KEYCODE_DPAD_CENTER || k == KeyEvent.KEYCODE_ENTER || k == KeyEvent.KEYCODE_NUMPAD_ENTER;
+        if (ok) {
+            if (down && e.getRepeatCount() == 0) pressPinKey(pinFocusedKey);
+            return true;
+        }
+        if (down) {
+            int to = -1, from = pinFocusedKey;
+            int col = from % 3, row = from / 3;
+            if (k == KeyEvent.KEYCODE_DPAD_UP) to = row > 0 ? from - 3 : -1;
+            else if (k == KeyEvent.KEYCODE_DPAD_DOWN) to = row < 2 ? from + 3 : -1;
+            else if (k == KeyEvent.KEYCODE_DPAD_LEFT) to = col > 0 ? from - 1 : -1;
+            else if (k == KeyEvent.KEYCODE_DPAD_RIGHT) to = col < 2 && from + 1 <= PIN_ZERO ? from + 1 : -1;
+            if (to >= 0 && pinKeys[to] != null) {
+                pinFocusedKey = to;
+                pinKeys[to].requestFocus();
+            }
+            return true;
+        }
+        return true;   // every other key is swallowed while the pad is up
     }
 
     // ---------------------------------------------------------------- rows
@@ -634,7 +906,13 @@ public class SettingsActivity extends Screen {
 
     /** ✓ Saved fades in at the end of the hint line, then out; a new save restarts it. */
     private void showSaved() {
+        showSaved(t.saved());
+    }
+
+    /** As showSaved, with the security section's own word (✓ Lock is on / off). */
+    private void showSaved(String message) {
         saved.removeCallbacks(hideSaved);
+        saved.setText(message);
         saved.animate().alpha(1).setDuration(Tokens.MOTION_OVERLAY_FADE_MS);
         saved.postDelayed(hideSaved, Tokens.MOTION_SAVED_LIFETIME_MS);
     }
@@ -662,6 +940,8 @@ public class SettingsActivity extends Screen {
             if (k == KeyEvent.KEYCODE_DPAD_LEFT || k == KeyEvent.KEYCODE_DPAD_RIGHT) return true;
             return super.dispatchKeyEvent(e);
         }
+        // The PIN pad, when it is up, is the only thing on this screen that answers.
+        if (pinOverlay != null) return pinKey(e);
         if (k == KeyEvent.KEYCODE_BACK) {
             if (!down) {
                 if (editing != null) stopEditing(false);

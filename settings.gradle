@@ -8,6 +8,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        mavenLocal()   // lets a machine that already has the deps in ~/.m2 build offline
         google()
         mavenCentral()
     }

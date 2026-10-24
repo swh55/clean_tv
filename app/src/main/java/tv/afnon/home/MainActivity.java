@@ -62,6 +62,8 @@ public class MainActivity extends Screen {
     private final String[] nodeLabel = new String[NODES];
 
     private TextView clock, gdate, hdate, wifiName;
+    /** The weather line under the dates (Weather, off in Settings); hidden while the feature is off. */
+    private TextView weather;
     private LinearLayout hints;
     private PrayerDay day;
     private long lastMinute = -1;
@@ -196,14 +198,18 @@ public class MainActivity extends Screen {
         clock.setIncludeFontPadding(false);
         clock.setTextDirection(rtl ? View.TEXT_DIRECTION_RTL : View.TEXT_DIRECTION_LTR);
         clock.setFontFeatureSettings("tnum");
-        // Under the clock the Hijri date (with the city) first, then the Gregorian, smaller and in mist.
+        // Under the clock the Hijri date (with the city) first, then the Gregorian, smaller and in mist,
+        // then the weather line, same size as the Gregorian.
         hdate = text(ui400, 26, Tokens.PLASTER_100);
         gdate = text(ui400, 24, Tokens.MIST_400);
+        weather = text(ui400, 24, Tokens.GOLD_400);
         when.addView(clock);
         when.addView(hdate);
         when.addView(gdate);
+        when.addView(weather);
         ((LinearLayout.LayoutParams) hdate.getLayoutParams()).topMargin = Ui.ipx(6);
         ((LinearLayout.LayoutParams) gdate.getLayoutParams()).topMargin = Ui.ipx(6);
+        ((LinearLayout.LayoutParams) weather.getLayoutParams()).topMargin = Ui.ipx(6);
         lineHeight(clock, 1f);
         when.setClipChildren(false);
         place(when, Tokens.COURT_X, 56, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -426,6 +432,7 @@ public class MainActivity extends Screen {
         clock.setText(time(now, 0.4f));
         gdate.setText(gregorian(now));
         hdate.setText(hijri(day) + t.sep() + t.city());
+        renderWeather();
 
         String[] names = t.prayerNames();
         if (day.friday) names[PrayerDay.DHUHR] = t.jumuah();
@@ -441,6 +448,14 @@ public class MainActivity extends Screen {
                 name = t.iftar();
                 sub = t.prayerNames()[PrayerDay.MAGHRIB] + " " + nextTime + t.sep() + t.city();
             }
+        }
+        // Eid takes the arch for its day (1 Shawwal, 10 Dhu al-Hijjah), Arafah gets a line under the countdown.
+        if (day.eid != 0) {
+            label = t.eidLabel();
+            name = t.eidName(day.eid == 1);
+            sub2 = t.eidGreeting();
+        } else if (day.arafah) {
+            sub2 = t.arafahLine();
         }
         archLabel.setText(label);
         archName.setText(name);
@@ -480,6 +495,22 @@ public class MainActivity extends Screen {
             cellTime[i].setTypeface(tf);
             if (!t.ar) cellTag[i].setLetterSpacing(0.2f);
         }
+    }
+
+    /** The weather line: the saved reading at once, refreshed at most every half hour (Weather). */
+    private void renderWeather() {
+        if (weather == null) return;
+        if (!Prefs.weather(this)) {
+            weather.setVisibility(View.GONE);
+            return;
+        }
+        weather.setVisibility(View.VISIBLE);
+        if (Weather.current(this) == null) weather.setText(t.weatherWaiting());
+        Weather.update(this, w -> {
+            if (weather == null || !weather.isAttachedToWindow()) return;
+            weather.setText(t.weatherLine(t.weatherDesc(Weather.group(w.code)),
+                t.d(String.format(java.util.Locale.US, "%.0f", w.temp)), w.humidity));
+        });
     }
 
     private void updateWifi() {

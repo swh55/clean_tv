@@ -1,0 +1,54 @@
+# Builds Afnon's debug APK: on every push to main and every pull request (as a downloadable artifact),
+# and on a v* tag, where the APK is also attached to that tag's release. The adhan recordings are not in
+# the repo (no licence): fetch-adhans.sh downloads them first. The spoken reminder clips need edge-tts and
+# are made when they can be; without them everything else still builds and runs.
+name: android
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Adhan recordings
+        run: bash tools/fetch-adhans.sh
+
+      - name: Spoken reminder clips (best effort)
+        run: |
+          pip install edge-tts || true
+          bash tools/fetch-announce.sh || true
+
+      - name: Build
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: APK → artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: afnon-${{ github.sha }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: APK → release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/debug/app-debug.apk
+          fail_on_unmatched_files: true

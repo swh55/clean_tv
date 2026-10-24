@@ -8,7 +8,7 @@
 
 Arabic first (RTL) and English · Offline prayer times for 136 cities · 14 adhan voices · Qibla · 16 Quran radio stations and reciters
 
-**[⬇ Download the APK](https://github.com/egyjs/afnon-android-tv-launcher/releases/latest/download/afnon.apk)** · [Releases](https://github.com/egyjs/afnon-android-tv-launcher/releases) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
+**[⬇ Download the APK](https://github.com/egyjs/afnon-android-tv-launcher/releases/latest/download/afnon.apk)** · [Releases](https://github.com/egyjs/afnon-android-tv-launcher/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
 
 ![Afnon home screen in Arabic](docs/screenshots/home-ar.png)
 
@@ -66,7 +66,17 @@ Afnon started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
 - **Reminders.** A card on Home, or a banner over other apps, 5 to 30 minutes before each prayer. It can
   also say «اقترب موعد صلاة …», and when a prayer's adhan is off, «حان الآن موعد صلاة …» as its time begins
   (both lower whatever is playing for a moment instead of pausing it; see `tools/fetch-announce.sh` below).
-- **Friday and Ramadan.** Both modes switch themselves on from the date.
+- **Friday, Ramadan, Eid and Arafah.** All four switch themselves on from the date: Jumu'ah replaces Dhuhr with
+  a Surat al-Kahf reminder; iftar and suhoor take over the countdown in Ramadan; on 1 Shawwal and 10 Dhu al-Hijjah
+  the arch greets Eid al-Fitr and Eid al-Adha (عيد مبارك · تقبل الله طاعتكم); 9 Dhu al-Hijjah says it is the day
+  of Arafah.
+- **The weather on Home.** One quiet gold line under the dates: the sky, the temperature and the humidity for the
+  saved city, from [Open-Meteo](https://open-meteo.com) — no key, no account, the request carries only the city's
+  coordinates. It refreshes at most every half hour, and a TV that lost its network keeps its last reading.
+  Settings → Display & language → Weather turns it off; on by default.
+- **A lock for Afnon Settings.** Settings → Security: a four-digit PIN, asked twice to set it, then asked by a
+  D-pad PIN pad (or the remote's number keys) before Settings opens from anywhere. The PIN is stored only as a
+  SHA-256 hash.
 - **Quran Radio.** إذاعة القرآن الكريم from Cairo (98.2 FM) by default, streamed live. Settings → Radio
   → Station picks another:
   - Quran radios: Nablus, Shabab FM Quran (Nablus), Qatar 1 and 2, Jordan.
@@ -88,17 +98,19 @@ Afnon started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
 Afnon has **no accounts, no analytics and no ads**. The radio is the only feature that uses the
 internet, and it connects only to the chosen station's stream, one at a time: `stream.radiojar.com` (Cairo),
 `quran-radio.org` (Nablus), `streaming.zaytonatube.com` (Shabab FM), `live.kwikmotion.com` (Qatar),
-`jrtv-live.ercdn.net` (Jordan) or `backup.qurango.net` (the reciters). The list is in `Radio.STATIONS`. Afnon
+`jrtv-live.ercdn.net` (Jordan) or `backup.qurango.net` (the reciters). The list is in `Radio.STATIONS`.
+With the weather on, Home also asks `api.open-meteo.com` at most every half hour for the saved city's weather —
+no key, no account, the request carries the city's coordinates and nothing else. Afnon
 makes no other network requests, and its [network security config](app/src/main/res/xml/network_security.xml)
 allows plain HTTP for the Cairo stream only.
-Your city and settings stay on the TV.
+Your city and settings stay on the TV, and the settings PIN is saved only as a hash.
 
 The [web preview](https://egyjs.github.io/afnon-android-tv-launcher/) is a separate static site, not the app. It loads
 nothing from other sites except the station's stream when you press Play, and keeps your settings in your browser.
 
 | Permission | Why |
 |---|---|
-| `INTERNET`, `WAKE_LOCK` | The radio stream, kept playing with the screen off |
+| `INTERNET`, `WAKE_LOCK` | The radio stream, kept playing with the screen off; and, when Weather is on, one HTTPS request to `api.open-meteo.com` at most every half hour, carrying only the city's coordinates |
 | `RECORD_AUDIO` | Required by Android's Visualizer, to read Afnon's **own** player for the level bars. It does not use the microphone. |
 | `WRITE_SECURE_SETTINGS` | Turns the TV's sleep timer off while the radio plays, and puts it back after. On TCL, also writes the remote button mappings (see TCL notes) |
 | `ACCESS_FINE_LOCATION` | Android 9+ hides the Wi-Fi name without it; Home shows the name. Afnon never reads the TV's location |
@@ -208,10 +220,10 @@ detects them by their hotkey service and each piece is skipped elsewhere:
 
 ```
 app/src/main/java/tv/afnon/home/
-  MainActivity        Home: clock, prayer row, favourites, radio pill and card, focus map
+  MainActivity        Home: clock, dates, weather, prayer row, favourites, radio pill and card, focus map
   PrayerDayActivity   Today's prayers, Qibla dial, room direction
   AllAppsActivity     Every app; hold OK to arrange favourites
-  SettingsActivity    On-TV settings (prayer, reminders, radio, display, network, device)
+  SettingsActivity    On-TV settings (prayer, reminders, radio, display, security, network, device) and the PIN pad
   NowActivity         The call to prayer
   AfnonDream          Screensaver
   PrayerWatch         Reminders, banner and the call, run inside the accessibility service
@@ -220,9 +232,11 @@ app/src/main/java/tv/afnon/home/
   Radio, RadioBars    Quran Radio player and its level bars
   ScreenOffActivity   Screen off while listening (TCL Audio Only, or a black fallback)
   Announce            The spoken reminder and «حان الآن موعد صلاة …»
+  Weather             The Open-Meteo fetch and its cache
   PrayerDay, Prefs, Reminders, Adhans, Text, Tokens, Ui …
 tools/                install, restore, disable/enable, fetch-adhans, fetch-announce, screenshot
 docs/screenshots/     the images above, all from the real TV
+docs/install-guide-ar.md  the install guide in Arabic, with the ADB fixes for a TV that won't give up HOME
 ```
 
 ---

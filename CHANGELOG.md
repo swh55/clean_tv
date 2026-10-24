@@ -4,6 +4,34 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+## [0.6] - 2026-10-24
+
+### Added
+- **The weather on Home** (الطقس): one quiet gold line under the dates — the sky, the temperature and the
+  humidity for the saved city, from [Open-Meteo](https://open-meteo.com) (no key, no account; the request
+  carries only the city's coordinates). Home shows the saved reading at once and refreshes at most every
+  half hour; a TV that lost its network keeps its last reading. Settings → Display & language → Weather
+  turns it off; it is on by default.
+- **Eid and Arafah on the arch**: on 1 Shawwal the arch greets عيد مبارك · عيد الفطر المبارك, on 10 Dhu
+  al-Hijjah عيد الأضحى المبارك, with «تقبل الله طاعتكم وكل عام وأنتم بخير» under the countdown; the day
+  of Arafah (9 Dhu al-Hijjah) shows «اليوم يوم عرفة». Both follow the Umm al-Qura calendar and the Hijri
+  date offset, like Ramadan and Friday.
+- **A lock for Afnon Settings** (قفل الإعدادات): Settings → Security (الأمان), a new section. Turning the
+  lock on asks for a four-digit PIN twice; after that every way into Afnon Settings (the gear on Home, the
+  remote's Settings button from any app) opens the PIN pad first. The pad works with the D-pad (a grid like
+  a phone keypad, which keeps its order in Arabic too) and with the remote's number keys, ⌫ deletes, Back
+  backs out — and a locked Settings never opens without the right PIN. The PIN is saved only as a SHA-256
+  hash, never as digits. Change PIN replaces it; turning the lock off clears it. Forgot the PIN? Clearing
+  Afnon's data wipes every setting along with it (`adb shell pm clear tv.afnon.home`).
+- **Damascus is Afnon's own city**: the launcher starts on دمشق (Muslim World League, Shafi'i), not Cairo.
+  Every other city is still one pick away.
+- A GitHub Actions workflow (`.github/workflows/android.yml`): builds the debug APK on every push to main
+  and every pull request (the adhans fetched by `tools/fetch-adhans.sh`), and attaches the APK to the
+  release when a `v*` tag lands.
+
+### Changed
+- versionCode 9 (was 8), versionName 0.6.
+
 ## [0.5] - 2026-10-22
 
 ### Added
@@ -152,7 +180,8 @@ First public release.
 - Screensaver, on-TV settings and remote button mapping.
 - Arabic (RTL) first, with English.
 
-[Unreleased]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.5...HEAD
+[Unreleased]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.6...HEAD
+[0.6]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.5...v0.6
 [0.5]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.4...v0.5
 [0.4]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.3.1...v0.4
 [0.3.1]: https://github.com/egyjs/afnon-android-tv-launcher/compare/v0.3...v0.3.1

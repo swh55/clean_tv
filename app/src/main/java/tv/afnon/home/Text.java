@@ -346,4 +346,53 @@ final class Text {
     }
 
     String hijriSuffix() { return ar ? " هـ" : " AH"; }
+
+    // ------------------------------------------------------------------ weather (Home line, Settings row)
+
+    String weatherRow() { return ar ? "الطقس" : "Weather"; }
+    String weatherHelp() {
+        return ar ? "درجة الحرارة والجو الآن على الرئيسية · من Open-Meteo · يحتاج الإنترنت"
+                  : "Temperature and sky now on Home · from Open-Meteo · needs the internet";
+    }
+    /** "صافٍ · ٢٤° · الرطوبة ٥٥٪". */
+    String weatherLine(String desc, String temp, int humidity) {
+        return d(desc + (ar ? " · " : " · ") + temp + "°" + (ar ? " · الرطوبة " : " · Humidity ") + humidity + "٪");
+    }
+    String weatherWaiting() { return ar ? "الطقس…" : "Weather…"; }
+    /** The sky's description, by Weather.group(). */
+    String weatherDesc(int group) {
+        String[] names = ar
+            ? new String[] {"صافٍ", "غائم جزئيًا", "غائم", "ضباب", "رذاذ", "مطر", "ثلج", "عواصف رعدية"}
+            : new String[] {"Clear", "Partly cloudy", "Overcast", "Fog", "Drizzle", "Rain", "Snow", "Thunderstorm"};
+        return names[Math.max(0, Math.min(names.length - 1, group))];
+    }
+
+    // ------------------------------------------------------------------ Eid and Arafah (Home's arch)
+
+    String eidLabel() { return ar ? "عيد مبارك" : "EID MUBARAK"; }
+    /** fitr: Eid al-Fitr (1 Shawwal); otherwise Eid al-Adha (10 Dhu al-Hijjah). */
+    String eidName(boolean fitr) {
+        return fitr ? (ar ? "عيد الفطر المبارك" : "Eid al-Fitr") : (ar ? "عيد الأضحى المبارك" : "Eid al-Adha");
+    }
+    String eidGreeting() { return ar ? "تقبل الله طاعتكم وكل عام وأنتم بخير" : "May Allah accept your good deeds · every year, may you be well"; }
+    String arafahLine() { return ar ? "اليوم يوم عرفة" : "Today is the day of Arafah"; }
+
+    // ------------------------------------------------------------------ Security: the settings PIN lock
+
+    String sectionSecurity() { return ar ? "الأمان" : "Security"; }
+    String pinLockRow() { return ar ? "قفل الإعدادات" : "Lock Afnon settings"; }
+    String pinLockHelp() { return ar ? "رمز من أربعة أرقام قبل فتح إعدادات أفنون" : "A four-digit PIN before Afnon settings opens"; }
+    String pinChangeRow() { return ar ? "تغيير الرمز" : "Change PIN"; }
+    String pinChangeHelp() { return ar ? "يظهر بعد تفعيل القفل" : "There once the lock is on"; }
+    String pinEnterTitle() { return ar ? "أدخل الرمز" : "Enter the PIN"; }
+    String pinSetTitle() { return ar ? "عيّن رمزًا من أربعة أرقام" : "Set a four-digit PIN"; }
+    String pinRepeatTitle() { return ar ? "أعد إدخال الرمز" : "Repeat the PIN"; }
+    String pinWrong() { return ar ? "رمز خاطئ، حاول مجددًا" : "Wrong PIN, try again"; }
+    String pinMismatch() { return ar ? "الرقمان غير متطابقين، حاول مجددًا" : "The two don't match, try again"; }
+    String pinLockedHint() { return ar ? "OK  اختيار الرقم     ⌫  حذف     رجوع  إغلاق" : "OK  pick a digit     ⌫  delete     Back  close"; }
+    String pinSetHint() { return ar ? "OK  اختيار الرقم     ⌫  حذف     رجوع  إلغاء" : "OK  pick a digit     ⌫  delete     Back  cancel"; }
+    String pinEnabled() { return ar ? "✓ تفعّل القفل" : "✓ Lock is on"; }
+    String pinDisabled() { return ar ? "✓ أُلغي القفل" : "✓ Lock is off"; }
+    /** The forgotten-PIN way out, in the security section's lock row's help while the lock is on. */
+    String pinLockedNote() { return ar ? "مفعّل · نسيان الرمز: حذف بيانات التطبيق يمسح الإعدادات كلها" : "On · forgot the PIN: clearing the app's data wipes every setting"; }
 }

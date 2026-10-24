@@ -29,6 +29,10 @@ final class PrayerDay {
     final Date suhoorEnd;
     final boolean friday;
     final boolean ramadan;
+    /** 0 = none, 1 = Eid al-Fitr (1 Shawwal), 2 = Eid al-Adha (10 Dhu al-Hijjah), by the Umm al-Qura calendar. */
+    final int eid;
+    /** The day of Arafah (9 Dhu al-Hijjah). */
+    final boolean arafah;
     final int hijriDay, hijriMonth, hijriYear;
     final double qibla;
 
@@ -79,6 +83,9 @@ final class PrayerDay {
         hijriMonth = h.get(IslamicCalendar.MONTH);
         hijriYear = h.get(IslamicCalendar.YEAR);
         ramadan = hijriMonth == IslamicCalendar.RAMADAN;
+        eid = hijriMonth == IslamicCalendar.SHAWWAL && hijriDay == 1 ? 1
+            : hijriMonth == IslamicCalendar.DHU_AL_HIJJAH && hijriDay == 10 ? 2 : 0;
+        arafah = hijriMonth == IslamicCalendar.DHU_AL_HIJJAH && hijriDay == 9;
 
         qibla = new Qibla(where).direction;
     }

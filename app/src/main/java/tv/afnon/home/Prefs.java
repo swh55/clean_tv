@@ -218,8 +218,10 @@ final class Prefs {
     };
 
     static int cityIndex(Context c) {
-        String id = of(c).getString("city", "cairo");
+        String id = of(c).getString("city", "damascus");
         for (int i = 0; i < CITIES.length; i++) if (CITIES[i].id.equals(id)) return i;
+        // A saved id from an older build that no longer exists falls back to Afnon's own city.
+        for (int i = 0; i < CITIES.length; i++) if (CITIES[i].id.equals("damascus")) return i;
         return 0;
     }
 
@@ -391,10 +393,49 @@ final class Prefs {
         return "system".equals(s) ? DateFormat.is24HourFormat(c) : "24".equals(s);
     }
 
+    // ---------------------------------------------------------------- weather
+
+    /** The weather line on Home (Weather, Open-Meteo); on by default, since it is one quiet line. */
+    static boolean weather(Context c) {
+        return of(c).getBoolean("weather", true);
+    }
+
+    static void setWeather(Context c, boolean on) {
+        of(c).edit().putBoolean("weather", on).apply();
+    }
+
+    // ---------------------------------------------------------------- security
+
+    /**
+     * The PIN that opens Afnon Settings: SHA-256 of the four digits with a fixed salt, hex — the digits
+     * themselves are never saved. "" when the lock is off (the default).
+     */
+    static String pin(Context c) {
+        return of(c).getString("pin", "");
+    }
+
+    static void setPin(Context c, String hash) {
+        of(c).edit().putString("pin", hash == null ? "" : hash).apply();
+    }
+
+    /** SHA-256 hex of "afnon:" + the PIN, the only form a PIN is saved in. */
+    static String pinHash(String pin) {
+        try {
+            java.security.MessageDigest d = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] out = d.digest(("afnon:" + pin).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder b = new StringBuilder(out.length * 2);
+            for (byte x : out) b.append(String.format("%02x", x));
+            return b.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            return "";   // every Android has SHA-256; an empty hash can never match a four-digit PIN's
+        }
+    }
+
     /** Everything a built screen depends on; a screen whose key changed while it was away rebuilds. */
     static String key(Context c) {
         SharedPreferences p = of(c);
         return p.getString("locale", "") + "|" + p.getString("digits", "") + "|" + clock24(c) + "|" + cityIndex(c)
-            + "|" + method(c) + "|" + madhab(c) + "|" + hijriOffset(c) + "|" + p.getInt("facing", -1);
+            + "|" + method(c) + "|" + madhab(c) + "|" + hijriOffset(c) + "|" + p.getInt("facing", -1)
+            + "|" + p.getBoolean("weather", true) + "|" + p.getString("pin", "").isEmpty();
     }
 }
