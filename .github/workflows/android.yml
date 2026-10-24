@@ -26,7 +26,10 @@ jobs:
           java-version: '17'
 
       - name: Android SDK
-        uses: android-actions/setup-android@v3
+        run: |
+          # ubuntu-latest ships the SDK; make sure platform 34 and its build-tools are there.
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" > /dev/null
 
       - name: Adhan recordings
         run: bash tools/fetch-adhans.sh

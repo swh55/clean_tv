@@ -45,6 +45,9 @@ jobs:
           path: site
 
   deploy:
+    # The site is a preview, not the app: a repo without GitHub Pages enabled stays green.
+    # To publish it for real: Settings > Pages > Build and deployment > Source: GitHub Actions.
+    continue-on-error: true
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
