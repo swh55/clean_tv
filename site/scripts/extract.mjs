@@ -13,7 +13,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const src = (f) => readFileSync(resolve(root, 'app/src/main/java/pro/datascoop/afnon', f), 'utf8');
+const src = (f) => readFileSync(resolve(root, 'app/src/main/java/pro/datascoop/tv', f), 'utf8');
 const out = resolve(root, 'site/src/data');
 mkdirSync(out, { recursive: true });
 const write = (name, data) => {

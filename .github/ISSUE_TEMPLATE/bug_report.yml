@@ -34,7 +34,7 @@ body:
     id: version
     attributes:
       label: Afnon version
-      description: "The release you installed, or `adb shell dumpsys package pro.datascoop.afnon | grep versionName`."
+      description: "The release you installed, or `adb shell dumpsys package pro.datascoop.tv | grep versionName`."
       placeholder: "0.2.1"
     validations:
       required: true

@@ -91,7 +91,7 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:taskAffinity="pro.datascoop.afnon.settings"
+            android:taskAffinity="pro.datascoop.tv.settings"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
 
@@ -102,7 +102,7 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity="pro.datascoop.afnon.call"
+            android:taskAffinity="pro.datascoop.tv.call"
             android:theme="@style/Theme.Afnon.Call"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
@@ -116,8 +116,16 @@
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
 
+        <!-- The Qibla on its own screen: opened by holding the remote's Settings button. -->
+        <activity
+            android:name=".QiblaActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+
         <!-- The screensaver. Made the TV's own with:
-             settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream -->
+             settings put secure screensaver_components pro.datascoop.tv/.AfnonDream -->
         <service
             android:name=".AfnonDream"
             android:label="@string/app_name"
@@ -130,7 +138,7 @@
         </service>
 
         <!-- Remote buttons. Turned on with:
-             settings put secure enabled_accessibility_services pro.datascoop.afnon/.RemoteKeys -->
+             settings put secure enabled_accessibility_services pro.datascoop.tv/.RemoteKeys -->
         <service
             android:name=".RemoteKeys"
             android:label="@string/remote_keys"

@@ -39,6 +39,9 @@ jobs:
           pip install edge-tts || true
           bash tools/fetch-announce.sh || true
 
+      - name: Unit tests (prayer times, weather, text, tokens)
+        run: ./gradlew testDebugUnitTest --no-daemon
+
       - name: Build
         run: ./gradlew assembleDebug --no-daemon
 
@@ -50,13 +53,13 @@ jobs:
           if-no-files-found: error
 
       # The download links (README, the Arabic install guide, the site) point at
-      # releases/latest/download/afnon.apk, so the release asset carries that name on every tag.
+      # releases/latest/download/scoop-tv.apk, so the release asset carries that name on every tag.
       - name: APK → release
         if: startsWith(github.ref, 'refs/tags/v')
-        run: cp app/build/outputs/apk/debug/app-debug.apk afnon.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk scoop-tv.apk
       - name: Attach the APK to the release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: afnon.apk
+          files: scoop-tv.apk
           fail_on_unmatched_files: true

@@ -1,16 +1,16 @@
 <div align="center">
 
-# Afnon · أفنون
+# Scoop TV
 
 **An Android TV home screen built around the prayer day.**
 
-<p dir="rtl"><b>أفنون: شاشة رئيسية لتلفاز أندرويد، تدور حول يوم الصلاة: المواقيت والقبلة والأذان وإذاعة القرآن الكريم.</b></p>
+<p dir="rtl"><b>Scoop TV: شاشة رئيسية لتلفاز أندرويد، تدور حول يوم الصلاة: المواقيت والقبلة والأذان وإذاعة القرآن الكريم.</b></p>
 
-Arabic first (RTL) and English · Offline prayer times for 136 cities · 14 adhan voices · Qibla · 16 Quran radio stations and reciters
+Arabic first (RTL) · English · Français · Türkçe · اردو · Offline prayer times for 136 cities · 14 adhan voices · Qibla · Quran radio · 3-day weather
 
-**[⬇ Download the APK](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk)** · [Releases](https://github.com/swh55/clean_tv/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
+**[⬇ Download the APK](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk)** · [Releases](https://github.com/swh55/clean_tv/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
 
-![Afnon home screen in Arabic](docs/screenshots/home-ar.png)
+![Scoop TV home screen in Arabic](docs/screenshots/home-ar.png)
 
 </div>
 
@@ -18,21 +18,21 @@ Arabic first (RTL) and English · Offline prayer times for 136 cities · 14 adha
 >
 > *Indeed, prayer has been decreed upon the believers at fixed times.* (An-Nisa 4:103)
 
-Afnon replaces the stock launcher on an Android TV with one quiet screen. The next prayer and a live
+Scoop TV replaces the stock launcher on an Android TV with one quiet screen. The next prayer and a live
 countdown sit inside a mihrab arch. The day's six times run across the top, your favourite apps sit
 below, and the call to prayer comes to the TV by itself. Built and tested on a **TCL 55P7K (Google
 TV, Android 12)**, driven only by the remote's D-pad.
 
 ### How it started
 
-Afnon started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
+Scoop TV started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
 
 1. **Debloat.** cleanyourtv's prompt cleared the TCL's ads and bloat, reversibly, with a backup and a restore script.
 2. **Launcher.** cleanyourtv's Apple TV-style home took over from the stock one.
 3. **Design.** A new direction, *Mihrab*, was designed around the prayer day: lapis and gold, with an arch for the next prayer.
 4. **Build.** [Claude Code](https://claude.com/claude-code) built it on the real TV over ADB, one screen at a time, checking each with a screenshot.
 
-<p dir="rtl">بدأ أفنون من مشروع <a href="https://github.com/Gathin23/cleanyourtv">cleanyourtv</a>: تنظيف التلفاز من الإعلانات، ثم شاشة رئيسية بسيطة، ثم تصميم «محراب» حول يوم الصلاة، ثم بناؤه على التلفاز نفسه شاشةً شاشة.</p>
+<p dir="rtl">بدأ سكوب TV من مشروع <a href="https://github.com/Gathin23/cleanyourtv">cleanyourtv</a>: تنظيف التلفاز من الإعلانات، ثم شاشة رئيسية بسيطة، ثم تصميم «محراب» حول يوم الصلاة، ثم بناؤه على التلفاز نفسه شاشةً شاشة.</p>
 
 ---
 
@@ -74,7 +74,7 @@ Afnon started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
   saved city, from [Open-Meteo](https://open-meteo.com) — no key, no account, the request carries only the city's
   coordinates. It refreshes at most every half hour, and a TV that lost its network keeps its last reading.
   Settings → Display & language → Weather turns it off; on by default.
-- **A lock for Afnon Settings.** Settings → Security: a four-digit PIN, asked twice to set it, then asked by a
+- **A lock for Scoop TV Settings.** Settings → Security: a four-digit PIN, asked twice to set it, then asked by a
   D-pad PIN pad (or the remote's number keys) before Settings opens from anywhere. The PIN is stored only as a
   SHA-256 hash.
 - **Quran Radio.** إذاعة القرآن الكريم from Cairo (98.2 FM) by default, streamed live. Settings → Radio
@@ -87,20 +87,20 @@ Afnon started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
   - **Screen off while listening**, using TCL's own Audio Only mode: the panel goes dark and the
     recitation keeps playing.
 - **Remote buttons.** An accessibility service maps the remote's app buttons, and its Settings,
-  Input and All apps buttons, to Afnon. The stock home's background service can then be disabled.
-- **Arabic and English.** RTL and LTR layouts. Language follows the TV or is set in Afnon. Digits
+  Input and All apps buttons, to Scoop TV. The stock home's background service can then be disabled.
+- **Arabic and English.** RTL and LTR layouts. Language follows the TV or is set in Scoop TV. Digits
   are Arabic-Indic or Latin.
 - **Light on the TV.** Plain Java and Views, with no AndroidX, Kotlin or Compose. No blur, no
   video, no shadows. It runs smoothly on a 1.8 GB TV.
 
 ## Privacy
 
-Afnon has **no accounts, no analytics and no ads**. The radio is the only feature that uses the
+Scoop TV has **no accounts, no analytics and no ads**. The radio is the only feature that uses the
 internet, and it connects only to the chosen station's stream, one at a time: `stream.radiojar.com` (Cairo),
 `quran-radio.org` (Nablus), `streaming.zaytonatube.com` (Shabab FM), `live.kwikmotion.com` (Qatar),
 `jrtv-live.ercdn.net` (Jordan) or `backup.qurango.net` (the reciters). The list is in `Radio.STATIONS`.
 With the weather on, Home also asks `api.open-meteo.com` at most every half hour for the saved city's weather —
-no key, no account, the request carries the city's coordinates and nothing else. Afnon
+no key, no account, the request carries the city's coordinates and nothing else. Scoop TV
 makes no other network requests, and its [network security config](app/src/main/res/xml/network_security.xml)
 allows plain HTTP for the Cairo stream only.
 Your city and settings stay on the TV, and the settings PIN is saved only as a hash.
@@ -111,29 +111,29 @@ nothing from other sites except the station's stream when you press Play, and ke
 | Permission | Why |
 |---|---|
 | `INTERNET`, `WAKE_LOCK` | The radio stream, kept playing with the screen off; and, when Weather is on, one HTTPS request to `api.open-meteo.com` at most every half hour, carrying only the city's coordinates |
-| `RECORD_AUDIO` | Required by Android's Visualizer, to read Afnon's **own** player for the level bars. It does not use the microphone. |
+| `RECORD_AUDIO` | Required by Android's Visualizer, to read Scoop TV's **own** player for the level bars. It does not use the microphone. |
 | `WRITE_SECURE_SETTINGS` | Turns the TV's sleep timer off while the radio plays, and puts it back after. On TCL, also writes the remote button mappings (see TCL notes) |
-| `ACCESS_FINE_LOCATION` | Android 9+ hides the Wi-Fi name without it; Home shows the name. Afnon never reads the TV's location |
+| `ACCESS_FINE_LOCATION` | Android 9+ hides the Wi-Fi name without it; Home shows the name. Scoop TV never reads the TV's location |
 | Accessibility service | Remote button mapping (see `RemoteKeys.java`) |
 
 ## Install
 
 ### Quick: the APK
 
-Download [`afnon.apk`](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk) from the latest release, then:
+Download [`scoop-tv.apk`](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk) from the latest release, then:
 
 ```bash
 export TV=192.168.1.50:5555
 adb connect $TV
-adb -s $TV install -r afnon.apk
-adb -s $TV shell cmd package set-home-activity pro.datascoop.afnon/.MainActivity
-adb -s $TV shell settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.RECORD_AUDIO
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.WRITE_SECURE_SETTINGS
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.ACCESS_FINE_LOCATION
+adb -s $TV install -r scoop-tv.apk
+adb -s $TV shell cmd package set-home-activity pro.datascoop.tv/.MainActivity
+adb -s $TV shell settings put secure screensaver_components pro.datascoop.tv/.AfnonDream
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.RECORD_AUDIO
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.WRITE_SECURE_SETTINGS
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.ACCESS_FINE_LOCATION
 ```
 
-Then turn on **Afnon remote buttons** in the TV's Settings → Accessibility. The APK includes the adhan recordings.
+Then turn on **Scoop TV remote buttons** in the TV's Settings → Accessibility. The APK includes the adhan recordings.
 
 ### From source
 
@@ -145,7 +145,7 @@ git clone https://github.com/swh55/clean_tv.git
 cd afnon-android-tv-launcher
 export TV=192.168.1.50:5555          # your TV's address
 adb connect $TV                      # accept the prompt on the TV
-bash tools/install.sh                # fetches the adhans, builds, installs, sets Afnon as home
+bash tools/install.sh                # fetches the adhans, builds, installs, sets Scoop TV as home
 ```
 
 `install.sh` runs `tools/fetch-adhans.sh` the first time. That script downloads the 14 recordings
@@ -173,18 +173,18 @@ in Developer options, revoke the USB debugging authorisations, reboot, and check
 | Change colours or the star pattern | `Tokens.java` (the design tokens) and `Ui.starLattice` |
 | Disable a stock app | `bash tools/disable.sh <package>` (reversible; logged to `state/disabled.log`) |
 | Re-enable an app | `bash tools/enable.sh <package>`, or on the TV: Settings → Apps → See all apps → Show system apps → the app → Enable |
-| Go back to stock | `bash tools/restore.sh`, then reboot. Re-enables everything in the log, restores home, screensaver and sleep timer, and uninstalls Afnon. |
+| Go back to stock | `bash tools/restore.sh`, then reboot. Re-enables everything in the log, restores home, screensaver and sleep timer, and uninstalls Scoop TV. |
 
 ### Trying things without waiting for a prayer
 
 ```bash
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test friday    # or ramadan, now (back to today)
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test reminder  # Home's reminder card, spoken
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test call      # the call screen, 8 s later
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test banner    # the banner and its voice, 8 s later (open another app)
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test announce  # «حان الآن موعد صلاة …», 8 s later
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es test radio     # radio on / off
-adb shell am start -n pro.datascoop.afnon/.MainActivity --es station nablus # pick a station (ids in Radio.STATIONS)
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test friday    # or ramadan, now (back to today)
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test reminder  # Home's reminder card, spoken
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test call      # the call screen, 8 s later
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test banner    # the banner and its voice, 8 s later (open another app)
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test announce  # «حان الآن موعد صلاة …», 8 s later
+adb shell am start -n pro.datascoop.tv/.MainActivity --es test radio     # radio on / off
+adb shell am start -n pro.datascoop.tv/.MainActivity --es station nablus # pick a station (ids in Radio.STATIONS)
 bash tools/shot.sh home                                               # screenshot to state/shots/
 ```
 
@@ -193,7 +193,7 @@ bash tools/shot.sh home                                               # screensh
 Some of this is TCL-specific. Each piece fails quietly on other brands:
 
 - **Audio Only** (screen off while listening) asks TCL Settings to show its own countdown dialog
-  (`com.tcl.settings.SHOW_WINDOW`, `Type=AudioOnly`). Elsewhere Afnon falls back to a black,
+  (`com.tcl.settings.SHOW_WINDOW`, `Type=AudioOnly`). Elsewhere Scoop TV falls back to a black,
   dimmed screen.
 - TCL remotes send Settings as `KEYCODE_NOTIFICATION` and the browser key as code `4159`.
 - The remote buttons go through TCL's own button remapping (`TclKeys.java`), so the accessibility
@@ -204,7 +204,7 @@ Some of this is TCL-specific. Each piece fails quietly on other brands:
 
 ## Other brands (CVTE)
 
-Tested on one Super General TV (CVTE board, Android 9). CVTE makes the boards in many budget TVs; Afnon
+Tested on one Super General TV (CVTE board, Android 9). CVTE makes the boards in many budget TVs; Scoop TV
 detects them by their hotkey service and each piece is skipped elsewhere:
 
 - The firmware answers the remote's buttons itself (from `/vendor/menu_config_xml/hotkey.xml`), so the remote
@@ -213,13 +213,13 @@ detects them by their hotkey service and each piece is skipped elsewhere:
   (`com.cvte.tv.globalui`) itself.
 - Buttons wired to an app that can't be replaced (ESHARE opens EShare) can be pointed at another app with
   the `redirects` preference, e.g. `com.ecloud.eshare.server=com.droidlogic.miracast`. Empty by default.
-- If Afnon guesses wrong about key filtering on some TV, the `key_filter` preference (`on`/`off`) forces it.
+- If Scoop TV guesses wrong about key filtering on some TV, the `key_filter` preference (`on`/`off`) forces it.
 - `install.sh` grants location, which Android 9+ needs before Home can show the Wi-Fi name.
 
 ## Project layout
 
 ```
-app/src/main/java/pro/datascoop/afnon/
+app/src/main/java/pro/datascoop/tv/
   MainActivity        Home: clock, dates, weather, prayer row, favourites, radio pill and card, focus map
   PrayerDayActivity   Today's prayers, Qibla dial, room direction
   AllAppsActivity     Every app; hold OK to arrange favourites
@@ -245,7 +245,7 @@ docs/install-guide-ar.md  the install guide in Arabic, with the ADB fixes for a 
 
 ## بالعربية
 
-**أفنون** شاشة رئيسية لتلفاز أندرويد، تبدأ من يوم الصلاة. الصلاة القادمة والعدّ التنازلي في قلب
+**سكوب TV** شاشة رئيسية لتلفاز أندرويد، تبدأ من يوم الصلاة. الصلاة القادمة والعدّ التنازلي في قلب
 محراب، ومواقيت اليوم الستة في الأعلى، وتطبيقاتك المفضلة تحتها. ويأتي الأذان إلى التلفاز وحده في وقته.
 
 - **مواقيت بلا إنترنت**: تُحسب على التلفاز نفسه، مع ١٣٦ مدينة في ٤٣ دولة تُختار بالمنطقة ثم الدولة ثم المدينة، وعدة طرق حساب، والمذهب الشافعي أو الحنفي في
@@ -259,11 +259,11 @@ docs/install-guide-ar.md  the install guide in Arabic, with the ADB fixes for a 
 - **إذاعة القرآن الكريم**: من القاهرة (٩٨٫٢ إف إم) افتراضيًا، بث مباشر، وأعمدة تتحرك مع صوت التلاوة نفسه. تتوقف
   للأذان ثم تُستأنف، ويمكن إطفاء الشاشة أثناء الاستماع لتوفير الكهرباء. ومن الإعدادات ← الإذاعة ← المحطة:
   إذاعات القرآن الكريم من نابلس وشباب إف إم وقطر والأردن، أو قناة أحد القرّاء العشرة على مدار الساعة.
-- **أزرار الريموت**: أزرار التطبيقات والإعدادات والمدخلات تعمل مع أفنون.
+- **أزرار الريموت**: أزرار التطبيقات والإعدادات والمدخلات تعمل مع سكوب TV.
 - **العربية أولًا**: من اليمين إلى اليسار، مع الإنجليزية، والأرقام عربية أو لاتينية.
 - **بلا حسابات ولا إعلانات ولا تتبّع**. الإذاعة وحدها تستخدم الإنترنت.
 
-للتثبيت حمّل ملف [`afnon.apk`](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk) من صفحة الإصدارات، أو ابنِه من المصدر كما في قسم **Install** أعلاه. وللعودة إلى الشاشة الأصلية شغّل `tools/restore.sh` ثم أعد تشغيل
+للتثبيت حمّل ملف [`scoop-tv.apk`](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk) من صفحة الإصدارات، أو ابنِه من المصدر كما في قسم **Install** أعلاه. وللعودة إلى الشاشة الأصلية شغّل `tools/restore.sh` ثم أعد تشغيل
 التلفاز. وبعد الانتهاء أغلق «تصحيح الأخطاء عبر الشبكة» في خيارات المطوّرين.
 
 </div>
@@ -277,7 +277,7 @@ docs/install-guide-ar.md  the install guide in Arabic, with the ADB fixes for a 
   source; `fetch-adhans.sh` downloads them, and the release APK includes them with this credit. If you
   hold the rights to a recording and want it removed, open an issue.
 - Radio: إذاعة القرآن الكريم, Cairo; Holy Quran Radio, Nablus; Shabab FM; Qatar's and Jordan's Quran radios;
-  and [mp3quran.net](https://mp3quran.net)'s reciter channels, each via its own public stream. Afnon is not
+  and [mp3quran.net](https://mp3quran.net)'s reciter channels, each via its own public stream. Scoop TV is not
   affiliated with any of them.
 - Fonts: [Amiri](https://github.com/aliftype/amiri), [Alexandria](https://fonts.google.com/specimen/Alexandria)
   and [Marcellus](https://fonts.google.com/specimen/Marcellus), all under the SIL Open Font Licence.

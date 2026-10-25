@@ -1,8 +1,8 @@
-# Afnon (أفنون): notes for Claude
+# Scoop TV (أفنون): notes for Claude
 
-Afnon is an Android TV home screen (HOME launcher) built around the prayer day: next-prayer countdown in a mihrab
+Scoop TV is an Android TV home screen (HOME launcher) built around the prayer day: next-prayer countdown in a mihrab
 arch, offline prayer times, Qibla, the adhan at prayer time, reminders, Friday/Ramadan modes and Quran Radio Cairo.
-Package `pro.datascoop.afnon`. Public repo: github.com/egyjs/afnon-android-tv-launcher (MIT).
+Package `pro.datascoop.tv`. Public repo: github.com/egyjs/afnon-android-tv-launcher (MIT).
 
 Read `README.md` (features, install, TCL notes) and `CONTRIBUTING.md` (the rules below in full) before larger work.
 Releasing: `gh.md`. History: `CHANGELOG.md`. Design spec: `afnon-mihrab/HANDOFF.md` and `afnon-mihrab/design/`.
@@ -34,7 +34,7 @@ real TV over ADB, never just in the build.
 export TV=<ip>:5555                 # the tools refuse to run without it
 bash tools/install.sh               # fetch adhans (first time), assembleDebug, install, set HOME, grants, a11y service
 bash tools/shot.sh home             # screenshot -> state/shots/home.png (look at it)
-adb -s $TV shell am start -n pro.datascoop.afnon/.MainActivity --es test friday   # ramadan|now|reminder|call|banner|announce|radio
+adb -s $TV shell am start -n pro.datascoop.tv/.MainActivity --es test friday   # ramadan|now|reminder|call|banner|announce|radio
 ```
 
 `tools/env.sh` finds adb itself (PATH, then `local.properties` sdk.dir, ANDROID_HOME, default SDK folders);

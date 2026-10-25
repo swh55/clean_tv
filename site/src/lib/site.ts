@@ -2,7 +2,7 @@
 import type { Lang } from './text';
 
 export const REPO = 'https://github.com/swh55/clean_tv';
-export const APK = `${REPO}/releases/latest/download/afnon.apk`;
+export const APK = `${REPO}/releases/latest/download/scoop-tv.apk`
 
 type L = Record<Lang, string>;
 export type Page = {

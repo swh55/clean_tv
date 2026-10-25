@@ -1,12 +1,12 @@
 <div align="center">
 
-# أفنون · Afnon
+# سكوب TV · Scoop TV
 
-**شاشة رئيسية لتلفاز أندرويد، تدور حول يوم الصلاة: المواقيت والقبلة والأذان وإذاعة القرآن الكريم.**
+**شاشة رئيسية لتلفاز أندرويد تدور حول يوم الصلاة: المواقيت والقبلة والأذان وإذاعة القرآن، بالطقس وتوقعاته ورمضان الموسّع، بخمس لغات: العربية والإنجليزية والفرنسية والتركية والأردية.**
 
 مواقيت بلا إنترنت لـ١٣٦ مدينة · ١٤ صوتًا للأذان · القبلة · ١٦ محطة إذاعة قرآن وقرّاء · الطقس · قفل الإعدادات
 
-[⬇ حمّل ملف APK](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk) · [الإصدارات](https://github.com/swh55/clean_tv/releases) · [English README](README.md)
+[⬇ حمّل ملف APK](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk) · [الإصدارات](https://github.com/swh55/clean_tv/releases) · [English README](README.md)
 
 ![الشاشة الرئيسية بالعربية](docs/screenshots/home-ar.png)
 
@@ -14,7 +14,7 @@
 
 > إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا · النساء ١٠٣
 
-**أفنون** يحل محل الشاشة الرئيسية الأصلية في تلفاز أندرويد بشاشة واحدة هادئة: الصلاة القادمة والعدّ
+**سكوب TV** يحل محل الشاشة الرئيسية الأصلية في تلفاز أندرويد بشاشة واحدة هادئة: الصلاة القادمة والعدّ
 التنازلي حيّان داخل محراب، ومواقيت اليوم الستة في الأعلى، وتطبيقاتك المفضلة تحتها، ويأتي الأذان إلى
 التلفاز وحده في وقته. بُني وجُرِّب على تلفاز **TCL 55P7K‏ (‏Google TV، أندرويد 12)**، ويُدار بالريموت
 حده (أسهم وOK).
@@ -59,13 +59,13 @@
   مفعّل افتراضيًا.
 - **قفل الإعدادات.** الإعدادات ← الأمان: رمز من أربعة أرقام يُطلب مرتين عند تعيينه، ثم يفتح به لوحة أرقام
   بأسهم الريموت (شبكة مثل لوحة الهاتف، وبترتيبها المألوف بالعربية أيضًا) أو بأزرار الأرقام في الريموت قبل
-  فتح إعدادات أفنون من أي مكان. الرمز لا يُحفظ أبدًا إلا كبصمة SHA-256، و«تغيير الرمز» يستبدله وإلغاء
+  فتح إعدادات سكوب TV من أي مكان. الرمز لا يُحفظ أبدًا إلا كبصمة SHA-256، و«تغيير الرمز» يستبدله وإلغاء
   القفل يمسحه. وإن نُسي الرمز فطريقة النجدة هي حذف بيانات التطبيق (يمسح الإعدادات كلها):
-  `adb shell pm clear pro.datascoop.afnon`.
+  `adb shell pm clear pro.datascoop.tv`.
 - **إذاعة القرآن الكريم.** من القاهرة (٩٨٫٢ إف إم) افتراضيًا، بث مباشر وأعمدة تتحرك مع صوت التلاوة، تتوقف
   للأذان ثم تُستأنف، وإمكانية إطفاء الشاشة أثناء الاستماع. ومن الإعدادات: إذاعات نابلس وشباب إف إم وقطر
   والأردن، وقنوات عشرة من القرّاء على مدار الساعة من mp3quran.net.
-- **أزرار الريموت.** أزرار التطبيقات والإعدادات والمدخلات وكل التطبيقات تعمل مع أفنون من أي تطبيق، عبر
+- **أزرار الريموت.** أزرار التطبيقات والإعدادات والمدخلات وكل التطبيقات تعمل مع سكوب TV من أي تطبيق، عبر
   خدمة تسهيلات الاستخدام.
 - **العربية أولًا** من اليمين إلى اليسار، مع الإنجليزية، والأرقام عربية (٠١٢٣) أو لاتينية (0123).
 - **خفيف على التلفاز.** جافا عادية وواجهات Views بلا AndroidX ولا Kotlin ولا Compose، بلا تمويه ولا
@@ -82,21 +82,21 @@
 
 ### الطريق السريع: ملف APK
 
-حمّل [`afnon.apk`](https://github.com/swh55/clean_tv/releases/latest/download/afnon.apk)
+حمّل [`scoop-tv.apk`](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk)
 من آخر إصدار، ثم من حاسوب عليه adb:
 
 ```bash
 export TV=192.168.1.50:5555              # عنوان التلفاز كما في إعدادات الشبكة فيه
 adb connect $TV
-adb -s $TV install -r afnon.apk
-adb -s $TV shell cmd package set-home-activity pro.datascoop.afnon/.MainActivity
-adb -s $TV shell settings put secure screensaver_components pro.datascoop.afnon/.AfnonDream
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.RECORD_AUDIO
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.WRITE_SECURE_SETTINGS
-adb -s $TV shell pm grant pro.datascoop.afnon android.permission.ACCESS_FINE_LOCATION
+adb -s $TV install -r scoop-tv.apk
+adb -s $TV shell cmd package set-home-activity pro.datascoop.tv/.MainActivity
+adb -s $TV shell settings put secure screensaver_components pro.datascoop.tv/.AfnonDream
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.RECORD_AUDIO
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.WRITE_SECURE_SETTINGS
+adb -s $TV shell pm grant pro.datascoop.tv android.permission.ACCESS_FINE_LOCATION
 ```
 
-ثم فعّل **أزرار ريموت أفنون** من إعدادات التلفاز ← إمكانية الوصول. ملف APK يتضمن تسجيلات الأذان.
+ثم فعّل **أزرار ريموت سكوب TV** من إعدادات التلفاز ← إمكانية الوصول. ملف APK يتضمن تسجيلات الأذان.
 
 > **تلفازك يرفض تغيير الشاشة الرئيسية؟** الدليل الكامل بالحلول خطوة بخطوة — كلها أوامر ADB بلا أي
 > أدوات بايثون — في [دليل التثبيت العربي](docs/install-guide-ar.md).
@@ -111,7 +111,7 @@ git clone https://github.com/swh55/clean_tv.git
 cd afnon-android-tv-launcher
 export TV=192.168.1.50:5555
 adb connect $TV
-bash tools/install.sh     # يجلب الأذان، يبني، يثبّت، يجعل أفنون الشاشة الرئيسية
+bash tools/install.sh     # يجلب الأذان، يبني، يثبّت، يجعل سكوب TV الشاشة الرئيسية
 ```
 
 `install.sh` يشغّل `tools/fetch-adhans.sh` أول مرة (يجلب ١٤ تسجيل أذان من
@@ -145,7 +145,7 @@ bash tools/install.sh     # يجلب الأذان، يبني، يثبّت، يج
 ## البنية
 
 ```
-app/src/main/java/pro/datascoop/afnon/
+app/src/main/java/pro/datascoop/tv/
   MainActivity        الرئيسية: الساعة والتواريخ والطقس وشريط المواقيت والمفضلة وبطاقة الإذاعة
   PrayerDayActivity   مواقيت اليوم وقرص القبلة واتجاه الغرفة
   AllAppsActivity     كل التطبيقات، وضغط OK مطولًا يرتب المفضلة
@@ -172,6 +172,6 @@ docs/install-guide-ar.md  دليل التثبيت العربي الكامل مع
 - الإذاعة: إذاعة القرآن الكريم بالقاهرة، إذاعات نابلس وقطر والأردن، وقنوات [mp3quran.net](https://mp3quran.net).
 - الخطوط: [Amiri](https://github.com/aliftype/amiri) و[Alexandria](https://fonts.google.com/specimen/Alexandria)
   و[Marcellus](https://fonts.google.com/specimen/Marcellus) برخصة SIL OFL. التفاصيل في [THIRD_PARTY.md](THIRD_PARTY.md).
-- بدأ أفنون من [cleanyourtv](https://github.com/Gathin23/cleanyourtv).
+- بدأ سكوب TV من [cleanyourtv](https://github.com/Gathin23/cleanyourtv).
 
 المشروع بترخيص [MIT](LICENSE)، والأصل من [egyjs/afnon-android-tv-launcher](https://github.com/egyjs/afnon-android-tv-launcher).

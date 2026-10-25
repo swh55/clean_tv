@@ -4,6 +4,52 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+## [0.8] - 2026-10-25
+
+### Changed
+- **The app is Scoop TV now, package `pro.datascoop.tv`** (كان `pro.datascoop.afnon`): still its own app beside
+  the original Afnon — every tool, doc, ADB command and download link uses the new name, and the release asset
+  is `scoop-tv.apk`. The older packages (`pro.datascoop.afnon`, `tv.afnon.home`) stay hidden from the app list
+  even when several are installed side by side. versionCode 10 → 11.
+
+### Added
+- **A tone with the reminder** (نغمة مع التنبيه): Settings → Reminders; two soft beeps with the reminder card
+  or banner, off by default.
+- **An iqamah countdown** (عدّاد الإقامة): Settings → Reminders; on the call screen, from the prayer's time —
+  10/15/20/30 minutes or off, "الإقامة بعد mm:ss" once a second, «حان وقت الإقامة» at the end.
+- **The Qibla on the call screen**: a small dial and "القبلة · من دمشق" under the prayer's time.
+- **A 3-day forecast** (توقعات 3 أيام): from the same Open-Meteo response, today's low/high and the two days
+  after it, one quiet line on Home (today by name, then tomorrow and the weekday), with its own display row.
+- **Wind instead of humidity** (تفصيل الطقس): the detail after the temperature switches to wind speed and
+  direction ("الرياح ١٣ كم/س شمال غرب"), from the same request.
+- **A temperature unit row** (وحدة الحرارة): Celsius or Fahrenheit, applied to the current reading, the
+  forecast and the Asr preview's clock alike.
+- **A rain alert** (احتمال مطر اليوم): when today's chance of rain tops 50%, a gold line under the weather.
+- **Weather glyphs** (رموز الطقس): sun and moon by day and night, clouds, fog, drizzle, rain, snow and a storm,
+  drawn by hand on the 24px grid — no images, they follow the gold of the line.
+- **The arch follows the day** (لون القوس مع الوقت): its fill shifts through deep night, a warm dawn, the day
+  lapis, a warm sunset and night again; a display row turns it off.
+- **A fuller Ramadan** (وضع رمضان موسّع): the imsakiya — this month's Fajr (imsak) and Maghrib (iftar) day by
+  day, scrollable, with ﴿شهر رمضان الذي أنزل فيه القرآن﴾ over it; the button lives on Prayer day only in
+  Ramadan.
+- **Countdowns before the season** (عدادات رمضان/عرفة): "باقي على رمضان ٢٣ يومًا" under the arch's countdown
+  through the last month before the first of Ramadan and the day of Arafah, with the Arabic count's proper
+  forms (يوم، يومان، أيام، يوماً).
+- **French, Turkish and Urdu** (Français · Türkçe · اردو): every interface string — over a hundred of them —
+  now exists in all five languages, each picked by one table; Urdu runs right to left with Eastern digits by
+  default, and «TV» still follows the TV's own language.
+- **A kids watch timer** (مؤقت مشاهدة الأطفال): Settings → Family & startup; after 15/30/45/60 minutes in any
+  other app the TV comes back to Home with «انتهى وقت المشاهدة» — watched by the remote-buttons service, paused
+  whenever Home or the screensaver is in front.
+- **An app at startup** (تطبيق يفتح عند الإقلاع): Settings → Family & startup; a chosen app opens itself
+  10/20/30 seconds after the TV boots, once per boot, with Home underneath so Back returns.
+- **The Qibla at a long press**: holding the remote's Settings button opens a dedicated Qibla screen (the dial,
+  the bearing and the direction in words); a tap still opens the settings. Wherever the service filters keys.
+- **Unit tests** (اختبارات وحدة): 23 of them, plain JUnit on the pure layers — prayer times (sane hours in
+  Damascus, whole minutes, the Hanafi Asr, the Qibla bearings), the Open-Meteo parser against a real response
+  shape, the five-language string table, and the design tokens' package and invariants. CI runs them before
+  the build.
+
 ## [0.7] - 2026-10-24
 
 ### Changed
