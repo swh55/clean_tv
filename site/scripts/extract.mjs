@@ -65,6 +65,33 @@ function splitTernary(body) {
   return null;
 }
 
+/** The inside of p(...) split on top-level commas, outside strings and brackets. */
+function splitTopArgs(expr) {
+  const args = [];
+  let cur = '', depth = 0, inStr = false;
+  for (let i = 0; i < expr.length; i++) {
+    const c = expr[i];
+    if (inStr) { cur += c; if (c === '\\') cur += expr[++i]; else if (c === '"') inStr = false; continue; }
+    if (c === '"') inStr = true;
+    if (c === '(' || c === '{' || c === '[') depth++;
+    else if (c === ')' || c === '}' || c === ']') depth--;
+    if (c === ',' && depth === 0) { args.push(cur.trim()); cur = ''; } else cur += c;
+  }
+  if (cur.trim()) args.push(cur.trim());
+  return args;
+}
+
+/** The Arabic and English of one string method's body: `p(AR, EN, FR, TR, UR)` or `pa(...)`, or the legacy ternary. */
+function twoLangs(body) {
+  const e = body.replace(/\s+/g, ' ').trim();
+  if ((e.startsWith('p(') || e.startsWith('pa(')) && e.endsWith(')')) {
+    const args = splitTopArgs(e.slice(e.indexOf('(') + 1, -1));
+    return args.length >= 2 ? [args[0], args[1]] : null;
+  }
+  const tern = splitTernary(e);
+  return tern ? [tern[0], tern[1]] : null;
+}
+
 const text = src('Text.java');
 const strings = {};
 const skipped = [];
@@ -72,15 +99,15 @@ const methodRe = /^ {4}(String(?:\[\])?) (\w+)\(([^)]*)\) \{\s*(?:return ([^;]*)
 for (const m of text.matchAll(methodRe)) {
   const [, type, name, rawParams, body] = m;
   const params = rawParams.split(',').map((p) => p.trim().split(/\s+/).pop()).filter(Boolean);
-  const tern = body && splitTernary(body.replace(/\s+/g, ' ').trim());
-  if (!tern) { skipped.push(name); continue; }
+  const two = body && twoLangs(body);
+  if (!two) { skipped.push(name); continue; }
   if (type === 'String[]') {
     const arr = (e) => [...e.matchAll(new RegExp(STR, 'g'))].map((x) => unescape(x[1]));
-    if (!/^new String\[\] \{/.test(tern[0])) { skipped.push(name); continue; }
-    strings[name] = { ar: arr(tern[0]), en: arr(tern[1]) };
+    if (!/^new String\[\] \{/.test(two[0])) { skipped.push(name); continue; }
+    strings[name] = { ar: arr(two[0]), en: arr(two[1]) };
     continue;
   }
-  const ar = template(tern[0], params), en = template(tern[1], params);
+  const ar = template(two[0], params), en = template(two[1], params);
   if (!ar || !en) { skipped.push(name); continue; }
   strings[name] = { ar: ar.s, en: en.s, ...(ar.d || en.d ? { d: true } : {}) };
 }
