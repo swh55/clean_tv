@@ -9,6 +9,7 @@ import android.view.View;
 /** Stroke icons on a 24px grid in the current colour, so they follow focus (README: Iconography). */
 final class Icon extends View {
     static final int WIFI = 0, GEAR = 1, COMPASS = 2, BELL = 3, BACK = 4, STAR = 5, MIHRAB = 6, RADIO = 7, PLAY = 8, STOP = 9, MOON = 10;
+    static final int BOOK = 11, SEARCH = 12, BOOKMARK = 13, DOWNLOAD = 14, PREV = 15, NEXT = 16, CHECK = 17;
 
     private int kind;
     private final float strokeOn24;
@@ -125,6 +126,59 @@ final class Icon extends View {
             float a = flip ? 24 - 15 : 15, b = flip ? 24 - 8 : 8;
             c.drawLine(a * k, 5 * k, b * k, 12 * k, p);
             c.drawLine(b * k, 12 * k, a * k, 19 * k, p);
+        } else if (kind == BOOK) {
+            // An open mushaf: the spine at 12, pages flanking, a bookmark ribbon on one.
+            c.drawLine(12 * k, 4.5f * k, 12 * k, 19.5f * k, p);
+            r.set(3.5f * k, 4.5f * k, 12 * k, 19.5f * k);
+            c.drawRoundRect(r, 1.5f * k, 1.5f * k, p);
+            r.set(12 * k, 4.5f * k, 20.5f * k, 19.5f * k);
+            c.drawRoundRect(r, 1.5f * k, 1.5f * k, p);
+            c.drawLine(15.5f * k, 4.5f * k, 15.5f * k, 11 * k, p);
+            c.drawLine(14.2f * k, 11 * k, 15.5f * k, 9.4f * k, p);
+            c.drawLine(16.8f * k, 11 * k, 15.5f * k, 9.4f * k, p);
+        } else if (kind == SEARCH) {
+            c.drawCircle(10.5f * k, 10.5f * k, 6 * k, p);
+            c.drawLine(14.8f * k, 14.8f * k, 19.5f * k, 19.5f * k, p);
+        } else if (kind == BOOKMARK) {
+            // M7 3h10v18l-5-4-5 4z, filled.
+            path.reset();
+            path.moveTo(7 * k, 3 * k);
+            path.lineTo(17 * k, 3 * k);
+            path.lineTo(17 * k, 21 * k);
+            path.lineTo(12 * k, 17 * k);
+            path.lineTo(7 * k, 21 * k);
+            path.close();
+            p.setStyle(Paint.Style.FILL);
+            c.drawPath(path, p);
+        } else if (kind == DOWNLOAD) {
+            // The arrow into a tray.
+            c.drawLine(12 * k, 3.5f * k, 12 * k, 14.5f * k, p);
+            c.drawLine(8 * k, 11 * k, 12 * k, 14.5f * k, p);
+            c.drawLine(16 * k, 11 * k, 12 * k, 14.5f * k, p);
+            c.drawLine(4.5f * k, 18 * k, 19.5f * k, 18 * k, p);
+            c.drawLine(4.5f * k, 18 * k, 4.5f * k, 20.5f * k, p);
+            c.drawLine(19.5f * k, 18 * k, 19.5f * k, 20.5f * k, p);
+        } else if (kind == PREV || kind == NEXT) {
+            // Two filled triangles pointing to the end (NEXT) or the start (PREV); mirrored in Arabic.
+            boolean flip = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+            boolean end = kind == NEXT != flip;
+            p.setStyle(Paint.Style.FILL);
+            float x0 = end ? 5f : 19f, tip = end ? 11f : 13f, x2 = end ? 13f : 11f, tip2 = end ? 19f : 5f;
+            path.reset();
+            path.moveTo(x0 * k, 5 * k);
+            path.lineTo(tip * k, 12 * k);
+            path.lineTo(x0 * k, 19 * k);
+            path.close();
+            c.drawPath(path, p);
+            path.reset();
+            path.moveTo(x2 * k, 5 * k);
+            path.lineTo(tip2 * k, 12 * k);
+            path.lineTo(x2 * k, 19 * k);
+            path.close();
+            c.drawPath(path, p);
+        } else if (kind == CHECK) {
+            c.drawLine(5 * k, 12.5f * k, 10 * k, 17.5f * k, p);
+            c.drawLine(10 * k, 17.5f * k, 19 * k, 6.5f * k, p);
         } else {
             c.drawCircle(12 * k, 12 * k, 9 * k, p);
             c.drawLine(12 * k, 12 * k, 15.5f * k, 5.5f * k, p);

@@ -528,6 +528,66 @@ final class Prefs {
             + "|" + p.getBoolean("remind_tone", false) + "|" + p.getInt("iqamah", 0)
             + "|" + p.getBoolean("forecast", true) + "|" + p.getBoolean("wind", false)
             + "|" + p.getBoolean("fahrenheit", false) + "|" + p.getBoolean("time_tint", true)
-            + "|" + p.getInt("kids", 0) + "|" + p.getString("autolaunch", "") + "|" + p.getInt("autolaunch_delay", 20);
+            + "|" + p.getInt("kids", 0) + "|" + p.getString("autolaunch", "") + "|" + p.getInt("autolaunch_delay", 20)
+            + "|" + p.getInt("qfont", 2);
+    }
+
+    // ---------------------------------------------------------------- Islamic Library
+
+    /** The chosen reciter (Reciters ids; the first one until chosen). */
+    static String reciter(Context c) {
+        return of(c).getString("reciter", "maher");
+    }
+
+    static void setReciter(Context c, String id) {
+        of(c).edit().putString("reciter", id).apply();
+    }
+
+    /** The reader's Qur'an text size, 1 (small) to 5 (large); 2 by default. */
+    static int quranFont(Context c) {
+        return of(c).getInt("qfont", 2);
+    }
+
+    static void setQuranFont(Context c, int size) {
+        of(c).edit().putInt("qfont", Math.max(1, Math.min(5, size))).apply();
+    }
+
+    /** The adhkar screens' mode: the whole list, or one zikr at a time. */
+    static boolean adhkarSingle(Context c) {
+        return of(c).getBoolean("azkar_single", false);
+    }
+
+    static void setAdhkarSingle(Context c, boolean single) {
+        of(c).edit().putBoolean("azkar_single", single).apply();
+    }
+
+    // Daily reminders — every one off by default, each with its own switch (minutes past midnight).
+
+    static boolean libRemMorning(Context c) { return of(c).getBoolean("lib_rem_m", false); }
+    static void setLibRemMorning(Context c, boolean on) { of(c).edit().putBoolean("lib_rem_m", on).apply(); }
+    static int libRemMorningAt(Context c) { return of(c).getInt("lib_rem_m_at", 6 * 60 + 30); }
+    static void setLibRemMorningAt(Context c, int m) { of(c).edit().putInt("lib_rem_m_at", m).apply(); }
+
+    static boolean libRemEvening(Context c) { return of(c).getBoolean("lib_rem_e", false); }
+    static void setLibRemEvening(Context c, boolean on) { of(c).edit().putBoolean("lib_rem_e", on).apply(); }
+    static int libRemEveningAt(Context c) { return of(c).getInt("lib_rem_e_at", 18 * 60 + 30); }
+    static void setLibRemEveningAt(Context c, int m) { of(c).edit().putInt("lib_rem_e_at", m).apply(); }
+
+    static boolean libRemAfter(Context c) { return of(c).getBoolean("lib_rem_p", false); }
+    static void setLibRemAfter(Context c, boolean on) { of(c).edit().putBoolean("lib_rem_p", on).apply(); }
+
+    static boolean libRemQuran(Context c) { return of(c).getBoolean("lib_rem_q", false); }
+    static void setLibRemQuran(Context c, boolean on) { of(c).edit().putBoolean("lib_rem_q", on).apply(); }
+    static int libRemQuranAt(Context c) { return of(c).getInt("lib_rem_q_at", 20 * 60 + 30); }
+    static void setLibRemQuranAt(Context c, int m) { of(c).edit().putInt("lib_rem_q_at", m).apply(); }
+
+    static boolean libRemKhatm(Context c) { return of(c).getBoolean("lib_rem_k", false); }
+    static void setLibRemKhatm(Context c, boolean on) { of(c).edit().putBoolean("lib_rem_k", on).apply(); }
+    static int libRemKhatmAt(Context c) { return of(c).getInt("lib_rem_k_at", 20 * 60); }
+    static void setLibRemKhatmAt(Context c, int m) { of(c).edit().putInt("lib_rem_k_at", m).apply(); }
+
+    /** Whether any library reminder is on — the library home's status card shows it. */
+    static boolean anyLibReminder(Context c) {
+        return libRemMorning(c) || libRemEvening(c) || libRemAfter(c) || libRemQuran(c) || libRemKhatm(c);
     }
 }

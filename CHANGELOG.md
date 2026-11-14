@@ -4,6 +4,51 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+## [0.9] - 2026-11-14
+
+### Added
+- **The Islamic Library** (المكتبة الإسلامية), a whole bento section off a new gold pill beside the radio
+  on Home — twelve screens and three data files, no new libraries, no new permissions:
+  - **Adhkar with their counters** (أذكار الصباح والمساء وأذكار بعد الصلاة): the three sections of Hisn
+    al-Muslim, verbatim, every zikr carrying the repetition the book itself prints (never an invented
+    count), its own source line and its note; one OK counts a repetition, the day's session is saved,
+    a one-by-one mode shows a large counter, and a reset chip zeroes the section.
+  - **The Qur'an** (المصحف): the Uthmani text of Tanzil — 114 surahs, 6236 verses, 604 pages, 30 juz —
+    built by `tools/quran-data` with integrity gates and the Tanzil notice shipped in the APK; search by
+    surah name and number with an on-screen letter/digit pad; verse search through two letters-only
+    columns so a query matches with or without the diacritics (and with today's ا-spelling where the
+    mushaf writes the dagger alif); a reader in Amiri with the mushaf's ornate verse numbers, the
+    Bismillah as its own header row (never part of verse 1), five text sizes, jump-to-verse, the focused
+    verse's own juz and page, and optional bookmarks. Reading positions are kept (text separate from
+    audio) and «أكمل القراءة» returns to the exact verse.
+  - **Reciters and a chapter player** (القرّاء): twelve reciters from mp3quran.net's own servers, each a
+    card with a preview of Al-Fatihah and a monogram plate (no photos ship); the player plays a whole
+    chapter, seeks by the bar, steps ±30 s, repeats or follows on, and carries on across screens like
+    the radio — pausing for the adhan and resuming after it, never talking over the radio (one starts,
+    the other stops) — and remembers the listening position per reciter and chapter.
+  - **Downloads, only on demand**: any chapter of any reciter through the TV's own DownloadManager into
+    the app's own files, with a manager screen (progress, sizes, delete), a finisher broadcast, and the
+    player preferring the completed copy.
+  - **Khatm plans** (ختمة القرآن): the 30/60/90-day presets or a custom pace (pages or juz a day, a start
+    delay); a progress card with the percentage, pages and juz left, days left, the expected finish and
+    the day's pages with the verse they start at; «أنجزت ورد اليوم» marks the day — **nothing is ever
+    marked automatically**; falling behind shows the days behind and «إعادة توزيع الأيام» spreads the
+    remaining days at the same pace without touching the history; several plans live side by side.
+  - **Daily reminders, all off by default** (التذكير اليومي): morning and evening adhkar, the adhkar
+    ten minutes after each prayer, the daily reading and the khatm day — each its own switch and time in
+    Library settings (also a ninth section in Scoop TV Settings), a quiet Home card with Open / Later /
+    Close, a banner that leaves on its own over other apps, never a sound, never over the adhan, the call
+    screen or the screensaver; riding the existing fifteen-second watch, so restarts schedule nothing.
+  - **Library settings** (إعدادات المكتبة): the reminder switches and times, the reader's text size,
+    the adhkar counters' reset, and the download manager.
+  - **Unit tests** for the pure layers: the letters-only folding (with the two-column search contract),
+    khatm day arithmetic across months and years, the adhkar count words and the reminder words in all
+    five languages — 14 new tests, 37 in all, green.
+  - **Twelve technical reports** under `docs/library-reports/` (source and licence verification for the
+    Qur'an text, the adhkar curation audit with its printed table, storage, the bento layout, each
+    feature, performance, and the QA report with its honest PASS / NOT TESTED ledger) beside the data
+    pipeline `tools/quran-data/` that rebuilds and re-verifies every asset from its source.
+
 ## [0.8] - 2026-10-25
 
 ### Changed

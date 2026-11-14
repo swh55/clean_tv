@@ -1,0 +1,22 @@
+The Qur'an text in this application comes from Tanzil (tanzil.net), downloaded through
+api.alquran.cloud, and is used under Tanzil's notice:
+
+  You are allowed to freely use, distribute and share the text of the Quran provided
+  that you do not modify the text and include this notice in all copies of the text
+  that you distribute or share. This notice applies to the Quran text only and not
+  to the translations.
+
+The text is stored verbatim, apart from two mechanical adjustments documented in
+tools/quran-data/build_quran_db.py: the file's leading U+FEFF marker is dropped, and
+the surah-header Bismillah that api.alquran.cloud embeds in verse 1 is split out so
+the reader shows it as its own header row — the mushaf's own arrangement. The build
+script gates the text's integrity (114 surahs, 6236 verses, per-surah counts, spot
+checks) and records a SHA-256 of the whole text in the database's meta table.
+
+The adhkar come from «حصن المسلم» by Sa'id ibn Ali ibn Wahf Al-Qahtani, from the
+digital text of github.com/rn0x/hisn_almuslim_json, chapters «أذكار الصباح والمساء»
+and «الأذكار بعد السلام من الصلاة», used verbatim with their own repetition counts
+and source lines — see tools/quran-data/build_azkar.py's audit table.
+
+The recitation audio streams from mp3quran.net's own servers (its public reciter
+list); nothing is downloaded except what is asked for in the Downloads screen.

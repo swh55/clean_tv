@@ -55,7 +55,7 @@ public class MainActivity extends Screen {
     // Section labels sit 10px above the design (478 / 722) so the focus ring and 1.06 scale never touch them.
     private static final int LABEL_ABOVE_FAV = 468, LABEL_ABOVE_MORE = 712;
 
-    private static final int ARCH = 0, WIFI = 1, SETTINGS = 2, F0 = 3, M0 = 7, ALL = 12, RADIO = 13, NODES = 14;
+    private static final int ARCH = 0, WIFI = 1, SETTINGS = 2, F0 = 3, M0 = 7, ALL = 12, RADIO = 13, LIBRARY = 14, NODES = 15;
 
     private final View[] nodes = new View[NODES];
     private final TextView[] cellTag = new TextView[6], cellName = new TextView[6], cellTime = new TextView[6];
@@ -80,6 +80,10 @@ public class MainActivity extends Screen {
     private LinearLayout card;
     private FocusTile cardOk, cardDay;
     private Date cardFor;
+    /** The Islamic Library's own reminder card (Open, Later, Close) and the kind it is for. */
+    private LinearLayout libCard;
+    private FocusTile libOpen, libLater, libClose;
+    private int libCardKind, libCardPrayer;
     /** The radio's header pill and, while open, its card. */
     private Icon radioIcon, playIcon;
     private RadioBars pillBars, cardBars;
@@ -168,6 +172,7 @@ public class MainActivity extends Screen {
         updateWifi();
         super.onResume();
         Reminders.home = this::showReminder;
+        LibReminders.home = this::showLibraryReminder;
         Radio.listen(onRadio);
         styleRadio();
     }
@@ -175,6 +180,7 @@ public class MainActivity extends Screen {
     @Override
     protected void onPause() {
         Reminders.home = null;
+        LibReminders.home = null;
         Radio.unlisten(onRadio);
         super.onPause();
     }
@@ -192,6 +198,7 @@ public class MainActivity extends Screen {
     void build() {
         newRoot();
         card = null;   // a reminder card went with the old root
+        libCard = null;
         radioCard = null;
         buildArch(488, 26, 12, Tokens.GOLD_200, 8);
 
@@ -235,13 +242,17 @@ public class MainActivity extends Screen {
         when.setClipChildren(false);
         place(when, Tokens.COURT_X, 56, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        // Radio and Wi-Fi side by side, ending 20px before the Settings button.
+        // The Library, the radio and Wi-Fi side by side, ending 20px before the Settings button.
+        nodes[LIBRARY] = libraryPill();
         nodes[RADIO] = radioPill();
         nodes[WIFI] = wifiPill();
         LinearLayout pills = new LinearLayout(this);
         pills.setClipChildren(false);
         float reach = FocusTile.REACH;
-        pills.addView(nodes[RADIO], new LinearLayout.LayoutParams(-2, Ui.ipx(72 + 2 * reach)));
+        pills.addView(nodes[LIBRARY], new LinearLayout.LayoutParams(-2, Ui.ipx(72 + 2 * reach)));
+        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-2, Ui.ipx(72 + 2 * reach));
+        rlp.setMarginStart(Ui.ipx(20 - 2 * reach));
+        pills.addView(nodes[RADIO], rlp);
         LinearLayout.LayoutParams wlp = new LinearLayout.LayoutParams(-2, Ui.ipx(72 + 2 * reach));
         wlp.setMarginStart(Ui.ipx(20 - 2 * reach));
         pills.addView(nodes[WIFI], wlp);
@@ -330,6 +341,33 @@ public class MainActivity extends Screen {
         b.setOnClickListener(v -> startActivity(new Intent(this, PrayerDayActivity.class)));
         nodeLabel[ARCH] = t.today();
         placeTile(b, 176, 904, 440, 72);
+        return b;
+    }
+
+    /** The Library pill: a book glyph beside the word, opening the Islamic Library. */
+    private View libraryPill() {
+        FocusTile b = new FocusTile(this, 36);
+        b.setRest(Tokens.LAPIS_800, Tokens.GOLD_400_60, 2);
+        LinearLayout row = new LinearLayout(this);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(Ui.ipx(28), 0, Ui.ipx(28), 0);
+        Icon book = new Icon(this, Icon.BOOK, 2f);
+        TextView label = text(ui500, 24, Tokens.GOLD_400);
+        label.setText(t.libPill());
+        label.setSingleLine(true);
+        row.addView(book, new LinearLayout.LayoutParams(Ui.ipx(30), Ui.ipx(30)));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
+        lp.setMarginStart(Ui.ipx(14));
+        row.addView(label, lp);
+        b.addView(row, new FrameLayout.LayoutParams(-2, -1));
+        b.setLook(f -> {
+            int c = f ? Tokens.LAPIS_900 : Tokens.GOLD_400;
+            label.setTextColor(c);
+            book.setColor(c);
+        });
+        b.setContentDescription(t.libTitle());
+        b.setOnClickListener(v -> startActivity(new Intent(this, LibraryActivity.class)));
+        nodeLabel[LIBRARY] = t.libTitle();
         return b;
     }
 
@@ -861,6 +899,88 @@ public class MainActivity extends Screen {
         nodes[ARCH].requestFocus();
     }
 
+    // ---------------------------------------------------------------- library reminder card
+
+    /**
+     * The Library's own reminder card: the same quiet shape as the prayer reminder — Open, Later (back in
+     * half an hour) and Close; nothing sounds and nothing is opened on its own. Back closes it too.
+     */
+    private void showLibraryReminder(int kind, int prayer) {
+        if (libCard != null) dismissLibraryReminder();
+        closeRadioCard(false);
+        if (card != null) dismissReminder();
+        libCardKind = kind;
+        libCardPrayer = prayer;
+
+        libCard = new LinearLayout(this);
+        libCard.setOrientation(LinearLayout.VERTICAL);
+        libCard.setPadding(Ui.ipx(36), Ui.ipx(32), Ui.ipx(36), Ui.ipx(32));
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Tokens.PLASTER_100);
+        bg.setCornerRadius(Ui.px(24));
+        bg.setStroke(Ui.ipx(6), Tokens.ON_PLASTER_BORDER);
+        libCard.setBackground(bg);
+        libCard.setClipChildren(false);
+        libCard.setClipToPadding(false);
+
+        TextView label = caps(text(ui400, 20, Tokens.ON_PLASTER_LABEL));
+        label.setText(t.lbLibLabel());
+        TextView title = text(displayBold, 48, Tokens.LAPIS_900);
+        title.setText(LibReminders.titleOf(t, kind, prayer, new PrayerDay(this, new Date())));
+        libCard.addView(label);
+        libCard.addView(title);
+        lineHeight(title, 1.15f);
+
+        LinearLayout buttons = new LinearLayout(this);
+        buttons.setClipChildren(false);
+        libOpen = cardButton(t.lbOpen(), true);
+        libOpen.setOnClickListener(v -> {
+            dismissLibraryReminder();
+            LibReminders.IntentFor where = LibReminders.open(libCardKind);
+            android.content.Intent i = new Intent(this, where.cls);
+            if (where.extra != null) i.putExtra(where.extra, where.value);
+            startSafely(i);
+        });
+        libLater = cardButton(t.lbLater(), false);
+        libLater.setOnClickListener(v -> {
+            LibReminders.later(this);
+            dismissLibraryReminder();
+        });
+        libClose = cardButton(t.lbClose(), false);
+        libClose.setOnClickListener(v -> dismissLibraryReminder());
+        float r = FocusTile.REACH;
+        buttons.addView(libOpen, new LinearLayout.LayoutParams(-2, Ui.ipx(68 + 2 * r)));
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(-2, Ui.ipx(68 + 2 * r));
+        llp.setMarginStart(Ui.ipx(16 - 2 * r));
+        buttons.addView(libLater, llp);
+        LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(-2, Ui.ipx(68 + 2 * r));
+        clp.setMarginStart(Ui.ipx(16 - 2 * r));
+        buttons.addView(libClose, clp);
+        LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(-2, -2);
+        blp.topMargin = Ui.ipx(24 - r);
+        blp.setMarginStart(-Ui.ipx(r));
+        libCard.addView(buttons, blp);
+
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(Ui.ipx(760), -2, Gravity.BOTTOM | Gravity.END);
+        lp.setMarginEnd(Ui.ipx(96));
+        lp.bottomMargin = Ui.ipx(56);
+        root.addView(libCard, lp);
+        for (View n : nodes) if (n != null) n.setFocusable(false);
+        libOpen.requestFocus();
+        List<String> h = new ArrayList<>();
+        h.add(t.hintOk(t.lbOpen()));
+        h.add(t.hintBackHome().replace(t.home(), t.dismiss()));
+        setHints(hints, h);
+    }
+
+    private void dismissLibraryReminder() {
+        if (libCard == null) return;
+        root.removeView(libCard);
+        libCard = null;
+        for (View n : nodes) if (n != null) n.setFocusable(true);
+        nodes[ARCH].requestFocus();
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
         int k = e.getKeyCode();
@@ -886,6 +1006,22 @@ public class MainActivity extends Screen {
             if (k == KeyEvent.KEYCODE_DPAD_LEFT || k == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 boolean toEnd = (k == KeyEvent.KEYCODE_DPAD_RIGHT) != rtl;
                 if (e.getAction() == KeyEvent.ACTION_DOWN) (toEnd ? cardDark : cardPlay).requestFocus();
+                return true;
+            }
+            if (k == KeyEvent.KEYCODE_DPAD_UP || k == KeyEvent.KEYCODE_DPAD_DOWN) return true;
+            return super.dispatchKeyEvent(e);
+        }
+        if (libCard != null) {
+            if (k == KeyEvent.KEYCODE_BACK) {
+                if (e.getAction() == KeyEvent.ACTION_UP) dismissLibraryReminder();
+                return true;
+            }
+            if (k == KeyEvent.KEYCODE_DPAD_LEFT || k == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                // Open sits first; toward the end come Later and then Close.
+                boolean toEnd = (k == KeyEvent.KEYCODE_DPAD_RIGHT) != rtl;
+                View from = getCurrentFocus();
+                FocusTile to = toEnd ? (from == libOpen ? libLater : libClose) : (from == libClose ? libLater : libOpen);
+                if (e.getAction() == KeyEvent.ACTION_DOWN) to.requestFocus();
                 return true;
             }
             if (k == KeyEvent.KEYCODE_DPAD_UP || k == KeyEvent.KEYCODE_DPAD_DOWN) return true;
@@ -928,8 +1064,9 @@ public class MainActivity extends Screen {
         boolean up = key == KeyEvent.KEYCODE_DPAD_UP, down = key == KeyEvent.KEYCODE_DPAD_DOWN;
         int to = -1;
         switch (from) {
-            case ARCH: to = right ? F0 : up ? RADIO : -1; break;
-            case RADIO: to = left ? ARCH : right ? WIFI : down ? F0 + 1 : -1; break;
+            case ARCH: to = right ? F0 : up ? LIBRARY : -1; break;
+            case LIBRARY: to = left ? ARCH : right ? RADIO : down ? F0 + 1 : -1; break;
+            case RADIO: to = left ? LIBRARY : right ? WIFI : down ? F0 + 1 : -1; break;
             case WIFI: to = left ? RADIO : right ? SETTINGS : down ? F0 + 2 : -1; break;
             case SETTINGS: to = left ? WIFI : down ? F0 + 3 : -1; break;
             default:
@@ -937,7 +1074,7 @@ public class MainActivity extends Screen {
                     int i = from - F0;
                     if (left) to = i == 0 ? ARCH : from - 1;
                     else if (right) to = i == 3 ? -1 : from + 1;
-                    else if (up) to = i == 3 ? SETTINGS : i == 2 ? WIFI : RADIO;
+                    else if (up) to = i == 3 ? SETTINGS : i == 2 ? WIFI : i == 1 ? RADIO : LIBRARY;
                     else to = M0 + new int[] {0, 1, 3, 4}[i];
                 } else {
                     int i = from - M0;

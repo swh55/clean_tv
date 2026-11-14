@@ -124,6 +124,79 @@
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
             android:screenOrientation="landscape" />
 
+        <!-- The Islamic Library: the bento home, the adhkar with their counters, the Qur'an index and
+             reader, the reciters, the player, the downloads, the khatm plans and the library settings.
+             All of it inside the launcher's own task, so Back returns Home. -->
+        <activity
+            android:name=".LibraryActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".AdhkarActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".QuranIndexActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".QuranReaderActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".BookmarksActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".RecitersActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".PlayerActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".DownloadsActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".KhatmActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".LibrarySettingsActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|uiMode|locale|layoutDirection"
+            android:screenOrientation="landscape" />
+
+        <!-- A chapter download finishing: marks it DONE (or FAILED) in the Library's registry. -->
+        <receiver
+            android:name=".Downloads$Finisher"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
         <!-- The screensaver. Made the TV's own with:
              settings put secure screensaver_components pro.datascoop.tv/.AfnonDream -->
         <service

@@ -143,6 +143,8 @@ final class Radio {
     static void start(Context c) {
         app = c.getApplicationContext();
         if (wanted) return;
+        // The recitation player and the radio are one sound source: whichever starts, the other stops.
+        if (Tilawa.on()) Tilawa.stop();
         wanted = true;
         failures = 0;
         keepAwake(true);

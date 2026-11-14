@@ -6,7 +6,7 @@
 
 <p dir="rtl"><b>Scoop TV: شاشة رئيسية لتلفاز أندرويد، تدور حول يوم الصلاة: المواقيت والقبلة والأذان وإذاعة القرآن الكريم.</b></p>
 
-Arabic first (RTL) · English · Français · Türkçe · اردو · Offline prayer times for 136 cities · 14 adhan voices · Qibla · Quran radio · 3-day weather
+Arabic first (RTL) · English · Français · Türkçe · اردو · Offline prayer times for 136 cities · 14 adhan voices · Qibla · Quran radio · 3-day weather · **The Islamic Library: adhkar with counters, the whole Qur'an, reciters, khatm plans**
 
 **[⬇ Download the APK](https://github.com/swh55/clean_tv/releases/latest/download/scoop-tv.apk)** · [Releases](https://github.com/swh55/clean_tv/releases) · [النسخة العربية من هذا الملف](README.ar.md) · **[Try it in your browser](https://egyjs.github.io/afnon-android-tv-launcher/)**
 
@@ -88,19 +88,48 @@ Scoop TV started from [cleanyourtv](https://github.com/Gathin23/cleanyourtv):
     recitation keeps playing.
 - **Remote buttons.** An accessibility service maps the remote's app buttons, and its Settings,
   Input and All apps buttons, to Scoop TV. The stock home's background service can then be disabled.
+- **The Islamic Library** (المكتبة الإسلامية), off the new gold pill beside the radio — a bento grid of
+  cards, all in the same lapis-and-gold house:
+  - **Adhkar with their counters** (أذكار الصباح والمساء وأذكار بعد الصلاة), from Hisn al-Muslim,
+    verbatim, every zikr with the repetition the book itself prints, its source line and its note;
+    counting is one OK a repetition, the day's session is saved, and there is a one-by-one mode with a
+    large counter.
+  - **The Qur'an** (المصحف): the Uthmani text of Tanzil, all 114 surahs and 6236 verses, search by name
+    and by number with the remote's own keys, verse search that matches with or without the diacritics,
+    a reader in Amiri with the mushaf's verse numbers, five text sizes, jump-to-verse, juz and page of
+    every verse, optional bookmarks — and reading that remembers exactly where it stopped.
+  - **Reciters and a chapter player** (القرّاء): twelve reciters from mp3quran.net, each with a preview
+    of Al-Fatihah; the player plays a whole chapter, seeks, repeats or follows on, and carries on across
+    screens like the radio — pausing for the adhan and coming back after it. The chosen reciter is saved.
+  - **Downloads, only when asked**: any chapter of any reciter, through the TV's own downloader, with a
+    manager to see and drop them; the player prefers the saved copy when it is complete.
+  - **Khatm plans** (ختمة القرآن): 30/60/90 days or your own pace, pages a day or juz a day; the day's
+    pages with the verse they start at; a progress card with days left and the expected finish; falling
+    behind offers to redistribute the days without touching the history. **Nothing is ever marked read
+    automatically** — only the reader's own button marks the day.
+  - **Daily reminders, all off by default**: morning and evening adhkar, the adhkar after each prayer,
+    the daily reading and the khatm day — each with its own time, a quiet card on Home (Open, Later,
+    Close) or a banner that leaves on its own, never a sound, never over the adhan or the screensaver.
 - **Arabic and English.** RTL and LTR layouts. Language follows the TV or is set in Scoop TV. Digits
   are Arabic-Indic or Latin.
 - **Light on the TV.** Plain Java and Views, with no AndroidX, Kotlin or Compose. No blur, no
-  video, no shadows. It runs smoothly on a 1.8 GB TV.
+  video, no shadows. It runs smoothly on a 1.8 GB TV — and the Library adds no libraries at all: its
+  whole Qur'an is one 4.4 MB database in the APK, and everything else runs on what the TV already has.
 
 ## Privacy
 
-Scoop TV has **no accounts, no analytics and no ads**. The radio is the only feature that uses the
-internet, and it connects only to the chosen station's stream, one at a time: `stream.radiojar.com` (Cairo),
+Scoop TV has **no accounts, no analytics and no ads**. The radio is the one feature that streams
+continuously: it connects only to the chosen station's stream, one at a time: `stream.radiojar.com` (Cairo),
 `quran-radio.org` (Nablus), `streaming.zaytonatube.com` (Shabab FM), `live.kwikmotion.com` (Qatar),
 `jrtv-live.ercdn.net` (Jordan) or `backup.qurango.net` (the reciters). The list is in `Radio.STATIONS`.
 With the weather on, Home also asks `api.open-meteo.com` at most every half hour for the saved city's weather —
-no key, no account, the request carries the city's coordinates and nothing else. Scoop TV
+no key, no account, the request carries the city's coordinates and nothing else.
+
+The **Islamic Library** goes to the internet only when you ask it to: reciting a chapter streams one
+file from the chosen reciter's server (`cdn.mp3quran.net`, the same servers mp3quran.net itself plays),
+the twenty-second preview the same, and a download fetches exactly the file you pressed — never anything
+on its own. Everything else in the Library (the Qur'an text, the adhkar, the search, the plans, the
+counters) is **fully offline**, inside the APK. Scoop TV
 makes no other network requests, and its [network security config](app/src/main/res/xml/network_security.xml)
 allows plain HTTP for the Cairo stream only.
 Your city and settings stay on the TV, and the settings PIN is saved only as a hash.
@@ -110,7 +139,7 @@ nothing from other sites except the station's stream when you press Play, and ke
 
 | Permission | Why |
 |---|---|
-| `INTERNET`, `WAKE_LOCK` | The radio stream, kept playing with the screen off; and, when Weather is on, one HTTPS request to `api.open-meteo.com` at most every half hour, carrying only the city's coordinates |
+| `INTERNET`, `WAKE_LOCK` | The radio stream, kept playing with the screen off; one HTTPS weather request at most every half hour; and, in the Islamic Library, the chapter you chose to play or download from `cdn.mp3quran.net` |
 | `RECORD_AUDIO` | Required by Android's Visualizer, to read Scoop TV's **own** player for the level bars. It does not use the microphone. |
 | `WRITE_SECURE_SETTINGS` | Turns the TV's sleep timer off while the radio plays, and puts it back after. On TCL, also writes the remote button mappings (see TCL notes) |
 | `ACCESS_FINE_LOCATION` | Android 9+ hides the Wi-Fi name without it; Home shows the name. Scoop TV never reads the TV's location |

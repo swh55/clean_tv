@@ -40,7 +40,7 @@ import java.util.function.IntConsumer;
  */
 public class SettingsActivity extends Screen {
 
-    private static final int PRAYER = 0, REMINDERS = 1, RADIO = 2, DISPLAY = 3, SECURITY = 4, NETWORK = 5, DEVICE = 6, FAMILY = 7, SECTIONS = 8;
+    private static final int PRAYER = 0, REMINDERS = 1, RADIO = 2, DISPLAY = 3, SECURITY = 4, NETWORK = 5, DEVICE = 6, FAMILY = 7, LIBRARY = 8, SECTIONS = 9;
     private static final int VALUE = 0, SEG = 1, STEP = 2, TOGGLE = 3;
     private static final int SIDEBAR = Tokens.LAPIS_950;
     private static final float ROWS_TOP = 112, ROW_H = 84, ROW_GAP = 8;
@@ -213,6 +213,7 @@ public class SettingsActivity extends Screen {
             case SECURITY: return t.sectionSecurity();
             case NETWORK: return t.sectionNetwork(ssid());
             case DEVICE: return t.sectionDevice();
+            case LIBRARY: return t.sectionLibrary();
             default: return t.sectionFamily();
         }
     }
@@ -492,6 +493,19 @@ public class SettingsActivity extends Screen {
                     String label() { return t.deviceRow(); }
                     String help() { return t.deviceHelp(); }
                     void open() { startSafely(new Intent(Settings.ACTION_SETTINGS)); }
+                });
+            case LIBRARY: return Arrays.asList(
+                new Row(VALUE) {
+                    String label() { return t.lsTitle(); }
+                    String help() { return t.lsRemindersHelp(); }
+                    String value() { return t.libTitle(); }
+                    void open() { startSafely(new Intent(c, LibrarySettingsActivity.class)); }
+                },
+                new Row(VALUE) {
+                    String label() { return t.rcManage(); }
+                    String help() { return t.rcRewaya(); }
+                    String value() { return t.dlTitle(); }
+                    void open() { startSafely(new Intent(c, DownloadsActivity.class)); }
                 });
             case FAMILY: default: return Arrays.asList(
                 new Row(VALUE) {

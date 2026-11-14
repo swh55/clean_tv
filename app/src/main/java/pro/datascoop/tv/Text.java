@@ -766,4 +766,226 @@ final class Text {
                  "Açık · PIN unutuldu: uygulama verilerini silmek her şeyi sıfırlar",
                  "آن · PIN بھول گئے: ایپ کا ڈیٹا صاف کرنے سے سب ترتیبات مٹ جاتی ہیں");
     }
+
+    // ---------------------------------------------------------------- Islamic Library
+
+    String libPill() { return p("المكتبة", "Library", "Bibliothèque", "Kütüphane", "لائبریری"); }
+    String libTitle() { return p("المكتبة الإسلامية", "Islamic Library", "Bibliothèque islamique", "İslam Kütüphanesi", "اسلامی لائبریری"); }
+    String libQuran() { return p("المصحف", "The Qur'an", "Le Coran", "Kur'an", "قرآن"); }
+    String libQuranSub() { return p("114 سورة · 604 صفحات · نص تَنزِل", "114 surahs · 604 pages · Tanzil text",
+        "114 sourates · 604 pages · texte Tanzil", "114 sure · 604 sayfa · Tanzil metni", "114 سورے · 604 صفحات · ٹنزل متن"); }
+    String libMorning() { return p("أذكار الصباح", "Morning adhkar", "Invocations du matin", "Sabah zikirleri", "صبح کے اذکار"); }
+    String libEvening() { return p("أذكار المساء", "Evening adhkar", "Invocations du soir", "Akşam zikirleri", "شام کے اذکار"); }
+    String libAfter() { return p("أذكار بعد الصلاة", "After-prayer adhkar", "Invocations après la prière", "Namaz sonrası zikirler", "نماز کے بعد کے اذکار"); }
+    String libContinue() { return p("أكمل القراءة", "Continue reading", "Continuer la lecture", "Okumaya devam", "مطالعہ جاری رکھیں"); }
+    String libListen() { return p("أكمل الاستماع", "Continue listening", "Continuer l'écoute", "Dinlemeye devam", "سماعت جاری رکھیں"); }
+    String libKhatm() { return p("ختمة القرآن", "Qur'an khatm", "Khatm du Coran", "Hatim planı", "ختمِ قرآن"); }
+    String libNew() { return p("ختمة جديدة", "New khatm", "Nouveau khatm", "Yeni hatim", "نئی ختم"); }
+    String libStatusSurah() { return p("آخر قراءة", "Last read", "Dernière lecture", "Son okuma", "آخری مطالعہ"); }
+    String libStatusReciter() { return p("القارئ", "Reciter", "Récitant", "Hafız", "قاری"); }
+    String libStatusKhatm() { return p("التقدم", "Progress", "Progression", "İlerleme", "ترقی"); }
+    String libStatusToday() { return p("ورد اليوم", "Today's reading", "Lecture du jour", "Günlük vird", "آج کا ورد"); }
+    String libStatusRemind() { return p("التذكير", "Reminders", "Rappels", "Hatırlatmalar", "یاد دہانیاں"); }
+    String libNothing() { return p("—", "—", "—", "—", "—"); }
+    String libOff() { return p("معطلة", "Off", "Désactivés", "Kapalı", "بند"); }
+    String libOn() { return p("مفعّلة", "On", "Activés", "Açık", "چالو"); }
+    String libReady(int which) {
+        String[] ar = {"ورد الصباح جاهز", "ورد المساء جاهز", "أذكار بعد الصلاة جاهزة"};
+        String[] en = {"The morning adhkar are ready", "The evening adhkar are ready", "The after-prayer adhkar are ready"};
+        String[] fr = {"Les invocations du matin sont prêtes", "Les invocations du soir sont prêtes", "Les invocations d'après la prière sont prêtes"};
+        String[] tr = {"Sabah zikirleri hazır", "Akşam zikirleri hazır", "Namaz sonrası zikirler hazır"};
+        String[] ur = {"صبح کے اذکار تیار ہیں", "شام کے اذکار تیار ہیں", "نماز کے بعد کے اذکار تیار ہیں"};
+        return pa(ar, en, fr, tr, ur)[which];
+    }
+
+    // ---------------------------------------------------------------- adhkar
+
+    String adhkarCount(int n) {
+        return p(n + " ذكرًا", n + " adhkar", n + " invocations", n + " zikir", n + " اذکار");
+    }
+    String adhkarProgress(int done, int total) { return d(done + "/" + total); }
+    String adhkarXOf(int done, int total) { return d(done + " / " + total); }
+    String adhkarTimes(int n) {
+        if (n == 1) return p("مرة", "once", "Une fois", "bir kez", "ایک بار");
+        return d("×" + n);
+    }
+    String adhkarModeList() { return p("قائمة", "List", "Liste", "Liste", "فہرست"); }
+    String adhkarModeSingle() { return p("مفرد", "One by one", "Une à une", "Tek tek", "ایک ایک"); }
+    String adhkarReset() { return p("تصفير العدّادات", "Reset counters", "Réinitialiser les compteurs", "Sayaçları sıfırla", "کاؤنٹر صفر کریں"); }
+    String adhkarResetDone() { return p("✓ صُفّرت", "✓ Reset", "✓ Réinitialisés", "✓ Sıfırlandı", "✓ صفر کر دیے"); }
+    String adhkarSource() { return p("المصدر", "Source", "Source", "Kaynak", "مأخذ"); }
+    String adhkarNote() { return p("ملاحظة", "Note", "Note", "Not", "نوٹ"); }
+    String adhkarDoneAll() { return p("✓ أُتمّ الورد", "✓ Done for today", "✓ Terminé pour aujourd'hui", "✓ Bugün tamamlandı", "✓ آج مکمل"); }
+    String hintAdhkarList() {
+        return p("OK  عدّ الذكر     ▲▼ تنقّل     رجوع  عودة", "OK  count     ▲▼  move     Back  back",
+            "OK  compter     ▲▼  naviguer     Retour  retour", "OK  say     ▲▼  gez     Geri  geri",
+            "OK  گنتی     ▲▼  منتقل     Back  واپس");
+    }
+    String hintAdhkarSingle() {
+        return p("OK  عدّ     ◀▶  الذكر السابق أو التالي     رجوع  عودة", "OK  count     ◀▶  previous or next     Back  back",
+            "OK  compter     ◀◀  précédent ou suivant     Retour  retour", "OK  say     ◀▶  önceki veya sonraki     Geri  geri",
+            "OK  گنتی     ◀▶  پچھلا یا اگلا     Back  واپس");
+    }
+
+    // ---------------------------------------------------------------- Qur'an index & search
+
+    String qiMeccan() { return p("مكية", "Meccan", "Mecquoise", "Mekkî", "مکی"); }
+    String qiMedinan() { return p("مدنية", "Medinan", "Médinoise", "Medinî", "مدنی"); }
+    String qiAyahs(int n) { return p(n + " آية", n + " verses", n + " versets", n + " ayet", n + " آیات"); }
+    String qiSearch() { return p("بحث", "Search", "Recherche", "Ara", "تلاش"); }
+    String qiByNumber() { return p("بالرقم", "By number", "Par numéro", "Numarayla", "نمبر سے"); }
+    String qiByName() { return p("بالاسم", "By name", "Par nom", "İsimle", "نام سے"); }
+    String qiResults(int n) { return p("نتائج: " + n, "Matches: " + n, "Résultats : " + n, "Sonuç: " + n, "نتائج: " + n); }
+    String qiNoResults() { return p("لا نتائج", "No matches", "Aucun résultat", "Sonuç yok", "کوئی نتیجہ نہیں"); }
+    String qiClear() { return p("⌫", "⌫", "⌫", "⌫", "⌫"); }
+    String verseSearch() { return p("البحث في الآيات", "Verse search", "Recherche de versets", "Ayet arama", "آیات میں تلاش"); }
+    String hintQi() {
+        return p("OK  فتح السورة     ▲▼  سور أخرى     رجوع  عودة", "OK  open     ▲▼  more surahs     Back  back",
+            "OK  ouvrir     ▲▼  d'autres sourates     Retour  retour", "OK  aç     ▲▼  diğer sureler     Geri  geri",
+            "OK  کھولیں     ▲▼  مزید سورے     Back  واپس");
+    }
+
+    // ---------------------------------------------------------------- Qur'an reader
+
+    String qrInfo(int ayahs, boolean meccan, int juz, int page) {
+        return d((meccan ? qiMeccan() : qiMedinan()) + " · " + ayahs + " · " + p("الجزء ", "Juz ", "Juz ", "Cüz ", "پارہ ") + juz
+            + p(" · الصفحة ", " · Page ", " · Page ", " · Sayfa ", " · صفحہ ") + page);
+    }
+    String qrFont() { return p("حجم الخط", "Text size", "Taille du texte", "Yazı boyutu", "متن کا سائز"); }
+    /** Where the focused verse sits: juz and page, in the reader's own words. */
+    String qrAt(int juz, int page) {
+        return d(p("الجزء ", "Juz ", "Juz ", "Cüz ", "پارہ ") + juz + p(" · الصفحة ", " · page ", " · page ", " · sayfa ", " · صفحہ ") + page);
+    }
+    String qrJump() { return p("انتقال إلى آية", "Go to verse", "Aller au verset", "Ayet'e git", "آیت پر جائیں"); }
+    String qrListen() { return p("استماع", "Listen", "Écouter", "Dinle", "سنیں"); }
+    String qrBookmark() { return p("علامة", "Bookmark", "Marque-page", "Yer imi", "نشانی"); }
+    String qrBookmarked() { return p("✓ علامة", "✓ Bookmarked", "✓ Marqué", "✓ İşaretli", "✓ نشانی لگی"); }
+    String qrSaved() { return p("✓ حُفظ الموضع", "✓ Position saved", "✓ Position enregistrée", "✓ Konum kaydedildi", "✓ مقام محفوظ"); }
+    String qrAyahMark(int n) { return d("" + n); }
+    String qrBookmarks() { return p("العلامات", "Bookmarks", "Marque-pages", "Yer imleri", "نشانیاں"); }
+    String hintQr() {
+        return p("OK  خيارات الآية     ▲▼  آية أخرى     رجوع  عودة", "OK  verse options     ▲▼  another verse     Back  back",
+            "OK  options du verset     ▲▼  autre verset     Retour  retour", "OK  ayet seçenekleri     ▲▼  başka ayet     Geri  geri",
+            "OK  آیت کے اختیارات     ▲▼  دیگر آیت     Back  واپس");
+    }
+
+    // ---------------------------------------------------------------- player
+
+    String plPause() { return p("إيقاف مؤقت", "Pause", "Pause", "Duraklat", "رکیں"); }
+    String plPrev() { return p("السورة السابقة", "Previous surah", "Sourate précédente", "Önceki sure", "پچھلی سورہ"); }
+    String plNext() { return p("السورة التالية", "Next surah", "Sourate suivante", "Sonraki sure", "اگلی سورہ"); }
+    String plSeek(int secs) { return d((secs < 0 ? "−" : "+") + Math.abs(secs) + p(" ث", " s", " s", " sn", " سیکنڈ")); }
+    String plRepeatFollow() { return p("تسلسل تلقائي", "Auto-continue", "Enchaînement auto", "Otomatik devam", "خودکار تسلسل"); }
+    String plRepeatOne() { return p("تكرار السورة", "Repeat surah", "Répéter la sourate", "Sureyi tekrarla", "سورہ دہرائیں"); }
+    String plRepeatStop() { return p("وقف بعد السورة", "Stop after", "Arrêter après", "Sonrasında dur", "بعد میں رک جائیں"); }
+    String plDownload() { return p("تنزيل السورة", "Download surah", "Télécharger la sourate", "Sureyi indir", "سورہ ڈاؤنلوڈ"); }
+    String plDownloaded() { return p("✓ منزّلة", "✓ Downloaded", "✓ Téléchargée", "✓ İndirildi", "✓ ڈاؤنلوڈ ہو گئی"); }
+    String plDownloading(int pct) { return p("تنزيل ", "Downloading ", "Téléchargement ", "İndiriliyor ", "ڈاؤنلوڈ ") + d(pct + "%"); }
+    String plLocal() { return p("نسخة محفوظة", "Saved copy", "Copie enregistrée", "Kayıtlı kopya", "محفوظ نقل"); }
+    String plConnecting() { return p("جارٍ الاتصال…", "Connecting…", "Connexion…", "Bağlanıyor…", "جڑ رہا ہے…"); }
+    String plError() { return p("تعذّر التشغيل", "Couldn't play", "Lecture impossible", "Oynatılamadı", "چل نہیں سکا"); }
+    String hintPlayer() {
+        return p("OK  تشغيل     ◀▶  تنقّل بين الأزرار     رجوع  عودة والتلاوة مستمرة", "OK  play     ◀▶  move between controls     Back  back, still playing",
+            "OK  lire     ◀▶  se déplacer     Retour  retour, lecture continue", "OK  oynat     ◀▶  gez     Geri  geri, çalmaya devam",
+            "OK  چلائیں     ◀▶  بٹنوں میں      Back  واپس، تلاوت جاری");
+    }
+
+    // ---------------------------------------------------------------- reciters & downloads
+
+    String rcTitle() { return p("القرّاء", "Reciters", "Récitateurs", "Hafızlar", "قاری"); }
+    String rcRewaya() { return p("حفص عن عاصم · مرتّل", "Hafs 'an 'Asim · murattal", "Hafs 'an 'Asim · murattal", "Hafs an Asım · mürettel", "حفص عن عاصم · مرتّل"); }
+    String rcChosen() { return p("✓ المختار", "✓ Chosen", "✓ choisi", "✓ Seçili", "✓ منتخب"); }
+    String rcStop() { return p("إيقاف المعاينة", "Stop preview", "Arrêter l'aperçu", "Önizlemeyi durdur", "آزمائش روکیں"); }
+    String rcPreview() { return p("معاينة", "Preview", "Aperçu", "Önizleme", "آزمائش"); }
+    String rcDownloads(int n) { return p(n + " سورة منزّلة", n + " surahs downloaded", n + " sourates téléchargées", n + " sure indirildi", n + " سورے ڈاؤنلوڈ"); }
+    String rcManage() { return p("إدارة التنزيلات", "Manage downloads", "Gérer les téléchargements", "İndirmeleri yönet", "ڈاؤنلوڈز کا انتظام"); }
+    String dlTitle() { return p("التنزيلات", "Downloads", "Téléchargements", "İndirmeler", "ڈاؤنلوڈز"); }
+    String dlNone() { return p("لا شيء منزّل بعد", "Nothing downloaded yet", "Rien de téléchargé", "Henüz indirilen yok", "ابھی کچھ نہیں"); }
+    String dlDeleted() { return p("✓ حُذف الملف", "✓ Deleted", "✓ Supprimé", "✓ Silindi", "✓ حذف ہو گیا"); }
+    String dlFailed() { return p("فشل التنزيل", "Download failed", "Échec du téléchargement", "İndirme başarısız", "ڈاؤنلوڈ ناکام"); }
+
+    // ---------------------------------------------------------------- khatm
+
+    String khDays(int n) { return p(n + " يومًا", n + " days", n + " jours", n + " gün", n + " دن"); }
+    String khPagesDaily(int n) { return p("نحو " + n + " صفحة يوميًا", "≈ " + n + " pages a day", "≈ " + n + " pages par jour", "günde ≈ " + n + " sayfa", "روزانہ ≈ " + n + " صفحات"); }
+    String khProgress(int pct) { return d(pct + "%"); }
+    String khOfPages(int done, int total) { return d(done + " / " + total + p(" صفحة", " pages", " pages", " sayfa", " صفحات")); }
+    String khJuzLeft(int n) { return p("≈ " + n + " جزءًا متبقية", "≈ " + n + " juz left", "≈ " + n + " juz restants", "≈ " + n + " cüz kaldı", "≈ " + n + " پارے باقی"); }
+    String khDaysLeft(int n) { return p("بقيت " + n + " يومًا", n + " days left", n + " jours restants", n + " gün kaldı", n + " دن باقی"); }
+    String khStartsIn(int n) { return n == 0 ? khStartsToday() : p("يبدأ بعد " + n + " يومًا", "starts in " + n + " days", "commence dans " + n + " jours", n + " gün sonra başlar", n + " دن بعد شروع"); }
+    String khStartsToday() { return p("يبدأ اليوم", "starts today", "commence aujourd'hui", "bugün başlar", "آج شروع"); }
+    String khTodayRange(int from, int to) { return p("اليوم: الصفحات " + from + "–" + to, "Today: pages " + from + "–" + to, "Aujourd'hui : pages " + from + "–" + to, "Bugün: sayfa " + from + "–" + to, "آج: صفحات " + from + "–" + to); }
+    String khMarkToday() { return p("أنجزت ورد اليوم", "Today's reading is done", "La lecture du jour est faite", "Günlük okuma tamam", "آج کا ورد مکمل"); }
+    String khMarked() { return p("✓ وُرد اليوم مكتمل", "✓ Today's reading done", "✓ Lecture du jour terminée", "✓ Bugünkü vird tamam", "✓ آج کا ورد مکمل"); }
+    String khBehind(int n) { return p("متأخر " + n + " يومًا", n + " days behind", n + " jours de retard", n + " gün geride", n + " دن پیچھے"); }
+    String khRedistribute() { return p("إعادة توزيع الأيام", "Redistribute the days", "Redistribuer les jours", "Günleri yeniden dağıt", "دنوں کی دوبارہ تقسیم"); }
+    String khRedistributed() { return p("✓ أُعيد التوزيع", "✓ Redistributed", "✓ Redistribués", "✓ Yeniden dağıtıldı", "✓ دوبارہ تقسیم ہو گئی"); }
+    String khDelete() { return p("حذف الخطة", "Delete plan", "Supprimer le plan", "Planı sil", "منصوبہ حذف کریں"); }
+    String khDeleted() { return p("✓ حُذفت الخطة", "✓ Plan deleted", "✓ Plan supprimé", "✓ Plan silindi", "✓ منصوبہ حذف"); }
+    String khByPages() { return p("بالصفحات", "By pages", "Par pages", "Sayfayla", "صفحات سے"); }
+    String khByJuz() { return p("بالأجزاء", "By juz", "Par juz", "Cüzle", "پاروں سے"); }
+    String khCustom() { return p("خطة مخصصة", "Custom plan", "Plan personnalisé", "Özel plan", "ذاتی منصوبہ"); }
+    String khCreate() { return p("إنشاء الخطة", "Create the plan", "Créer le plan", "Planı oluştur", "منصوبہ بنائیں"); }
+    String khAddPages(int n) { return p("+" + n + " صفحة", "+" + n + " pages", "+" + n + " pages", "+" + n + " sayfa", "+" + n + " صفحات"); }
+    String khReminder() { return p("تذكير الورد اليومي", "Daily reading reminder", "Rappel de lecture", "Günlük okuma hatırlatması", "روزانہ ورد کی یاد دہانی"); }
+    String khExpected(String date) { return p("الإنجاز المتوقع: " + date, "Expected finish: " + date, "Fin prévue : " + date, "Beklenen bitiş: " + date, "متوقع تکمیل: " + date); }
+    String khNone() { return p("لا خطة بعد — ختمة القرآن على مراحل من اختيارك", "No plan yet — the whole Qur'an in steps you choose",
+        "Aucun plan — le Coran en entier, à votre rythme", "Henüz plan yok — tüm Kur'an, sizin seçtiğiniz adımlarla", "ابھی کوئی منصوبہ نہیں — پورا قرآن آپ کے مرتبے پر"); }
+    String hintKhatm() {
+        return p("OK  فتح الخطة     ▲▼  تنقّل     رجوع  عودة", "OK  open     ▲▼  move     Back  back",
+            "OK  ouvrir     ▲▼  naviguer     Retour  retour", "OK  aç     ▲▼  gez     Geri  geri",
+            "OK  کھولیں     ▲▼  منتقل     Back  واپس");
+    }
+
+    // ---------------------------------------------------------------- library settings & reminders
+
+    String sectionLibrary() { return p("المكتبة", "Library", "Bibliothèque", "Kütüphane", "لائبریری"); }
+    String lsTitle() { return p("إعدادات المكتبة", "Library settings", "Réglages de la bibliothèque", "Kütüphane ayarları", "لائبریری ترتیبات"); }
+    String lsReminders() { return p("التذكير اليومي", "Daily reminders", "Rappels quotidiens", "Günlük hatırlatmalar", "روزانہ یاد دہانیاں"); }
+    String lsRemindersHelp() { return p("بطاقة هادئة في وقت تختاره — بلا صوت ولا مقاطعة", "A quiet card at a time you pick — no sound, no interruption",
+        "Une carte discrète à l'heure choisie — sans son ni interruption", "Seçtiğiniz saatte sessiz bir kart — ses yok, kesinti yok",
+        "آپ کے منتخب وقت پر ایک خاموش کارڈ — بلا آواز، بلا رکاوٹ"); }
+    String lsRemMorning() { return p("تذكير أذكار الصباح", "Morning adhkar reminder", "Rappel des invocations du matin", "Sabah zikri hatırlatması", "صبح کے اذکار کی یاد دہانی"); }
+    String lsRemEvening() { return p("تذكير أذكار المساء", "Evening adhkar reminder", "Rappel des invocations du soir", "Akşam zikri hatırlatması", "شام کے اذکار کی یاد دہانی"); }
+    String lsRemAfter() { return p("تذكير أذكار ما بعد الصلاة", "After-prayer adhkar reminder", "Rappel des invocations d'après la prière", "Namaz sonrası zikir hatırlatması", "نماز کے بعد اذکار کی یاد دہانی"); }
+    String lsRemAfterHelp() { return p("بعد كل صلاة بعشر دقائق", "Ten minutes after each prayer", "Dix minutes après chaque prière", "Her namazdan on dakika sonra", "ہر نماز کے دس منٹ بعد"); }
+    String lsRemQuran() { return p("تذكير ورد القرآن", "Daily reading reminder", "Rappel de la lecture quotidienne", "Günlük okuma hatırlatması", "روزانہ ورد کی یاد دہانی"); }
+    String lsRemKhatm() { return p("تذكير خطة الختم", "Khatm plan reminder", "Rappel du plan de khatm", "Hatim planı hatırlatması", "ختم کے منصوبے کی یاد دہانی"); }
+    String lsTime(int minutesOfDay) {
+        return d(String.format(java.util.Locale.US, "%02d:%02d", minutesOfDay / 60 % 24, minutesOfDay % 60));
+    }
+    /** The time row of a reminder: its one word. */
+    String lsTimeRow() { return p("الوقت", "Time", "Heure", "Saat", "وقت"); }
+    String lsFontSize() { return p("حجم خط المصحف", "Qur'an text size", "Taille du texte du Coran", "Kur'an yazı boyutu", "قرآن متن کا سائز"); }
+    String lsResetAzkar() { return p("تصفير عدادات الأذكار", "Reset the adhkar counters", "Réinitialiser les compteurs", "Zikir sayaçlarını sıfırla", "اذکار کے کاؤنٹر صفر کریں"); }
+    String lsDownloads() { return rcManage(); }
+    String lsAzkarSource() { return p("مصدر الأذكار: حصن المسلم للقحطاني · مصدر النص: تَنزِل", "Adhkar: Hisn al-Muslim (Al-Qahtani) · Qur'an text: Tanzil",
+        "Invocations : Hisn al-Muslim (Al-Qahtani) · texte : Tanzil", "Zikirler: Hisnül-Müslim (El-Kahtani) · metin: Tanzil",
+        "اذکار: حصن المسلم (القحطانی) · متن: ٹنزل"); }
+    String hintLibrary() {
+        return p("OK  فتح     ▲▼◀▶  تنقّل بين البطاقات     رجوع  عودة", "OK  open     arrows  move between cards     Back  back",
+            "OK  ouvrir     flèches  naviguer entre les cartes     Retour  retour", "OK  aç     oklar  kartlar arasında gez     Geri  geri",
+            "OK  کھولیں     تیر  کارڈوں میں      Back  واپس");
+    }
+    String hintSettingsLib() {
+        return p("OK  فتح الإعدادات     رجوع  عودة", "OK  open settings     Back  back", "OK  ouvrir les réglages     Retour  retour",
+            "OK  ayarları aç     Geri  geri", "OK  ترتیبات کھولیں     Back  واپس");
+    }
+
+    // ---------------------------------------------------------------- library reminder card & banner
+
+    String lbDue(int which) {
+        String[] ar = {"حان وقت أذكار الصباح", "حان وقت أذكار المساء", "أذكار ما بعد الصلاة جاهزة"};
+        String[] en = {"Time for the morning adhkar", "Time for the evening adhkar", "The after-prayer adhkar are due"};
+        String[] fr = {"L'heure des invocations du matin", "L'heure des invocations du soir", "Les invocations d'après la prière"};
+        String[] tr = {"Sabah zikirleri vakti", "Akşam zikirleri vakti", "Namaz sonrası zikirler vakti"};
+        String[] ur = {"صبح کے اذکار کا وقت", "شام کے اذکار کا وقت", "نماز کے بعد کے اذکار کا وقت"};
+        return pa(ar, en, fr, tr, ur)[which];
+    }
+    String lbQuranDue() { return p("وقت ورد القرآن اليومي", "Time for today's reading", "L'heure de la lecture du jour", "Günlük okuma vakti", "آج کے ورد کا وقت"); }
+    String lbKhatmDue() { return p("ورد الختمة اليومي", "Today's khatm reading", "La lecture du khatm du jour", "Bugünkü hatim okuması", "آج کی ختم کا ورد"); }
+    String lbOpen() { return p("فتح", "Open", "Ouvrir", "Aç", "کھولیں"); }
+    String lbLater() { return p("لاحقًا", "Later", "Plus tard", "Sonra", "بعد میں"); }
+    String lbClose() { return p("إغلاق", "Close", "Fermer", "Kapat", "بند کریں"); }
+    String lbLibLabel() { return p("المكتبة الإسلامية", "ISLAMIC LIBRARY", "BIBLIOTHÈQUE ISLAMIQUE", "İSLAM KÜTÜPHANESİ", "اسلامی لائبریری"); }
 }

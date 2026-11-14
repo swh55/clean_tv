@@ -93,6 +93,9 @@ final class PrayerWatch {
             }
         }
         if (asleep) return;
+        // The Islamic Library's own quiet reminders (Settings → Library): the call guard above has already
+        // kept them away from a call, they never sound, and they never come over the screensaver.
+        if (!AfnonDream.running) LibReminders.tick(service, day, now);
         if (Reminders.dueReminder(service, day, now)) {
             String key = day.nextIndex + ":" + day.nextTime.getTime();
             if (key.equals(reminded) || AfnonDream.running) return;
