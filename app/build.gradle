@@ -2,6 +2,19 @@ plugins {
     id 'com.android.application'
 }
 
+// Scoop TV's one permanent release key. The keystore itself never enters this repo: it is kept
+// elsewhere (a copy ships with the build hand-over, docs/signing.md tells its story) and the four
+// values below come from a gradle property (-PscoopKeystore=…, -PscoopStorePassword=…,
+// -PscoopKeyAlias=…, -PscoopKeyPassword=…) or an environment variable (SCOOP_KEYSTORE,
+// SCOOP_STORE_PASSWORD, SCOOP_KEY_ALIAS, SCOOP_KEY_PASSWORD — the GitHub Action passes its
+// secrets that way). One key signs every version, so an update installs over the previous one
+// with plain `adb install -r`; a re-created key would not — see docs/signing.md.
+def keystorePath = providers.gradleProperty('scoopKeystore').orElse(providers.environmentVariable('SCOOP_KEYSTORE'))
+def keystorePass = providers.gradleProperty('scoopStorePassword').orElse(providers.environmentVariable('SCOOP_STORE_PASSWORD'))
+def keyAliasProp = providers.gradleProperty('scoopKeyAlias').orElse(providers.environmentVariable('SCOOP_KEY_ALIAS'))
+def keyPass = providers.gradleProperty('scoopKeyPassword').orElse(providers.environmentVariable('SCOOP_KEY_PASSWORD'))
+def signingReady = keystorePath.present && keystorePass.present && keyAliasProp.present && keyPass.present
+
 android {
     namespace 'pro.datascoop.tv'
     compileSdk 34
@@ -10,13 +23,47 @@ android {
         applicationId 'pro.datascoop.tv'
         minSdk 26
         targetSdk 34
-        versionCode 12
-        versionName '0.9'
+        versionCode 13
+        versionName '0.9.1'
+    }
+
+    signingConfigs {
+        release {
+            if (signingReady) {
+                storeFile rootProject.file(keystorePath.get())
+                storePassword keystorePass.get()
+                keyAlias keyAliasProp.get()
+                keyPassword keyPass.get()
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (signingReady) {
+                signingConfig signingConfigs.release
+            }
+            // No shrinking on purpose: the release APK carries the same classes and assets as the
+            // debug one (the whole mushaf, the adhkar, the adhan recordings), only not debuggable.
+        }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// A release without the key must fail loudly, not fall back to an unsigned or debug APK. That is
+// exactly how v0.9 reached the releases page signed with the CI runner's throwaway debug key:
+// assembleDebug output renamed to scoop-tv.apk. Never again.
+gradle.taskGraph.whenReady { graph ->
+    if (graph.allTasks.any { it.name ==~ /assemble.*Release/ } && !signingReady) {
+        throw new GradleException(
+            'Scoop TV release signing is not configured. Pass -PscoopKeystore, -PscoopStorePassword, ' +
+            '-PscoopKeyAlias and -PscoopKeyPassword, or the SCOOP_KEYSTORE, SCOOP_STORE_PASSWORD, ' +
+            'SCOOP_KEY_ALIAS and SCOOP_KEY_PASSWORD environment variables. The keystore itself never ' +
+            'enters the repo — see docs/signing.md.')
     }
 }
 

@@ -4,6 +4,24 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-14
+
+### Fixed
+- **The release APK is signed with Scoop TV's own permanent key now — not the build machine's debug key.**
+  v0.9's `scoop-tv.apk` was `assembleDebug` output renamed: signed with whatever throwaway debug
+  keystore the CI runner generated that hour (`CN=Android Debug`), so no two builds could ever
+  agree on a signature — no future version could have updated it on any TV. The tag build is now
+  `assembleRelease` signed with the one key held in the repository secrets (`KEYSTORE_BASE64`,
+  `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`), and CI verifies before publishing
+  (`apksigner verify`, the `pro.datascoop.tv` package stamp, a raised versionCode). A release
+  build without the key fails loudly instead of falling back — unsigned or debug-signed APKs can
+  no longer reach a release by mistake. See `docs/signing.md`.
+- The signing story is written down (`docs/signing.md`): the key's rules, the four CI secrets,
+  local signed builds, backup advice, and the never-over-the-original-Afnon install contract.
+- `.gitignore` now rejects `*.keystore` and `*.jks` anywhere in the tree, so the key cannot be
+  committed by accident.
+- versionCode 13.
+
 ## [0.9] - 2026-11-14
 
 ### Added

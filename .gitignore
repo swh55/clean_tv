@@ -13,3 +13,7 @@ app/src/main/assets/announce/*.mp3
 state/
 # Machine-specific notes for Claude
 CLAUDE.local.md
+# The release key never enters the repo, under any name or in any directory (docs/signing.md)
+*.keystore
+*.jks
+*.keystore.b64

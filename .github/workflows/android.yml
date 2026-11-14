@@ -1,7 +1,13 @@
-# Builds Afnon's debug APK: on every push to main and every pull request (as a downloadable artifact),
-# and on a v* tag, where the APK is also attached to that tag's release. The adhan recordings are not in
-# the repo (no licence): fetch-adhans.sh downloads them first. The spoken reminder clips need edge-tts and
-# are made when they can be; without them everything else still builds and runs.
+# Builds Scoop TV. On every push to main and every pull request the unit tests run and the debug
+# APK is a downloadable artifact — an internal check only, never published and never installed
+# over anything: a debug key changes on every runner, and an APK signed with it cannot update.
+# On a v* tag the RELEASE APK is built and signed with Scoop TV's permanent key, whose four
+# values come from the repository secrets (KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS,
+# KEY_PASSWORD), so every version is signed with the same key and installs over the previous
+# one with plain `adb install -r`. The signature and the package name are verified in CI before
+# anything is attached to a release. The adhan recordings are not in the repo (no licence):
+# fetch-adhans.sh downloads them first. The spoken reminder clips need edge-tts and are made
+# when they can be; without them everything else still builds and runs.
 name: android
 
 on:
@@ -39,24 +45,62 @@ jobs:
           pip install edge-tts || true
           bash tools/fetch-announce.sh || true
 
-      - name: Unit tests (prayer times, weather, text, tokens)
+      - name: Unit tests (prayer times, weather, text, tokens, the library)
         run: ./gradlew testDebugUnitTest --no-daemon
 
-      - name: Build
+      # Every non-tag build: the debug APK stays a run artifact (it is never a release).
+      - name: Build the debug APK (artifact only, never published)
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         run: ./gradlew assembleDebug --no-daemon
 
-      - name: APK → artifact
+      - name: Debug APK → artifact
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v4
         with:
           name: afnon-${{ github.sha }}
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
+      # Tag builds: the release key. The keystore file itself never touches the repo; the secret
+      # holds its bytes and nothing is echoed — GitHub masks the other secrets in the logs too.
+      - name: Decode the permanent release key
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/scoop-tv.keystore"
+          if [ ! -s "$RUNNER_TEMP/scoop-tv.keystore" ]; then
+            echo "::error::The KEYSTORE_BASE64 secret is missing or empty, so the release APK would be unsigned. Set the four signing secrets (docs/signing.md) and push the tag again."
+            exit 1
+          fi
+
+      - name: Build and sign the release APK with the permanent key
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          SCOOP_KEYSTORE: ${{ runner.temp }}/scoop-tv.keystore
+          SCOOP_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          SCOOP_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SCOOP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      # The same checks the local hand-over runs, as a gate: a tag build that is unsigned, or
+      # stamped with anything but pro.datascoop.tv, fails before it can reach a release.
+      - name: Verify the signature and the package before publishing
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          APK=app/build/outputs/apk/release/app-release.apk
+          BT="$ANDROID_HOME/build-tools/34.0.0"
+          "$BT/apksigner" verify --print-certs "$APK"
+          "$BT/aapt" dump badging "$APK" | grep -E "^package: name='pro\.datascoop\.tv'"
+          "$BT/aapt" dump badging "$APK" | grep -E "versionCode='(1[3-9]|[2-9][0-9])'"
+          "$BT/apksigner" verify "$APK"
+          echo "Checked: signed, package pro.datascoop.tv, versionCode raised."
+
       # The download links (README, the Arabic install guide, the site) point at
       # releases/latest/download/scoop-tv.apk, so the release asset carries that name on every tag.
       - name: APK → release
         if: startsWith(github.ref, 'refs/tags/v')
-        run: cp app/build/outputs/apk/debug/app-debug.apk scoop-tv.apk
+        run: cp app/build/outputs/apk/release/app-release.apk scoop-tv.apk
       - name: Attach the APK to the release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
